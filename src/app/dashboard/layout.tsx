@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Home,
@@ -16,6 +16,9 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
+import ProfileCompletionModal from "@/components/ProfileCompletionModal";
 
 const navigation = [
   { name: "Feed", href: "/dashboard", icon: Home },
@@ -32,6 +35,45 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const supabase = createClient();
+  const router = useRouter();
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [checkingProfile, setCheckingProfile] = useState(true);
+
+  useEffect(() => {
+    async function checkProfile() {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("id", user.id)
+          .single();
+
+        if (error || !data) {
+          // Profile doesn't exist, show modal
+          setShowProfileModal(true);
+        }
+      } catch (err) {
+        console.error("Error checking profile:", err);
+      } finally {
+        setCheckingProfile(false);
+      }
+    }
+
+    checkProfile();
+  }, [user, supabase]);
+
+  const handleProfileComplete = () => {
+    setShowProfileModal(false);
+    router.refresh();
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -89,6 +131,7 @@ export default function DashboardLayout({
           <div className="p-4 border-t border-border/50">
             <Button
               variant="ghost"
+              onClick={handleLogout}
               className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent"
             >
               <LogOut className="h-5 w-5 mr-3" />
@@ -121,6 +164,13 @@ export default function DashboardLayout({
         {/* Page content */}
         <main className="p-6">{children}</main>
       </div>
+
+      {!checkingProfile && (
+        <ProfileCompletionModal
+          open={showProfileModal}
+          onClose={handleProfileComplete}
+        />
+      )}
     </div>
   );
 }

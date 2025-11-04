@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { Network } from "lucide-react";
 
-export function Footer() {
+interface FooterProps {
+  onJoinClick?: () => void;
+}
+
+export function Footer({ onJoinClick }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
@@ -56,9 +60,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <Link href="/signup" className="text-gray-300 hover:text-green-400 transition-colors cursor-pointer">
+                <button 
+                  onClick={onJoinClick}
+                  className="text-gray-300 hover:text-green-400 transition-colors cursor-pointer"
+                >
                   Join the Network
-                </Link>
+                </button>
               </li>
             </ul>
           </div>

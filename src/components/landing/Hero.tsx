@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Network, Sparkles } from "lucide-react";
 
-export function Hero() {
+interface HeroProps {
+  onJoinClick?: () => void;
+}
+
+export function Hero({ onJoinClick }: HeroProps) {
   return (
     <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 sm:py-16 lg:py-20 overflow-hidden">
       {/* Background Pattern */}
@@ -63,16 +65,15 @@ export function Hero() {
 
             {/* CTA */}
             <div className="pt-2 sm:pt-4">
-              <Link href="/signup" className="cursor-pointer">
-                <button
-                  className="group inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-6 py-3 sm:px-8 sm:py-4 lg:px-10 lg:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer w-full sm:w-auto"
-                >
-                  Join the Network
-                  <ArrowRight
-                    className="ml-2 sm:ml-3 w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform"
-                  />
-                </button>
-              </Link>
+              <button
+                onClick={onJoinClick}
+                className="group inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-6 py-3 sm:px-8 sm:py-4 lg:px-10 lg:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer w-full sm:w-auto"
+              >
+                Join the Network
+                <ArrowRight
+                  className="ml-2 sm:ml-3 w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform"
+                />
+              </button>
             </div>
 
             {/* Trust Indicators */}

@@ -15,19 +15,7 @@ import {
 import { Settings, Loader2, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-
-const COUNTRY_CODES = [
-  { value: "+1", label: "+1 (US/Canada)" },
-  { value: "+44", label: "+44 (UK)" },
-  { value: "+91", label: "+91 (India)" },
-  { value: "+86", label: "+86 (China)" },
-  { value: "+81", label: "+81 (Japan)" },
-  { value: "+49", label: "+49 (Germany)" },
-  { value: "+33", label: "+33 (France)" },
-  { value: "+61", label: "+61 (Australia)" },
-  { value: "+55", label: "+55 (Brazil)" },
-  { value: "+52", label: "+52 (Mexico)" },
-];
+import { COUNTRY_CODES } from "@/constants/country-codes";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -75,7 +63,7 @@ export default function ProfilePage() {
             twitter: data.twitter_url || "",
             github: data.github_url || "",
             calendly: data.calendly_url || "",
-            whatsappCountryCode: data.whatsapp_country_code || "",
+            whatsappCountryCode: data.whatsapp_country_code || "+91",
             whatsappNumber: data.whatsapp_number || "",
             discord: data.discord_username || "",
           });

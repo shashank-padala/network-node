@@ -27,7 +27,11 @@ const features = [
   },
 ];
 
-export function Features() {
+interface FeaturesProps {
+  onJoinClick?: () => void;
+}
+
+export function Features({ onJoinClick }: FeaturesProps) {
   return (
     <section id="features" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -74,11 +78,12 @@ export function Features() {
             <p className="text-base sm:text-lg mb-4 sm:mb-6 opacity-90">
               Connect with builders, find co-founders, and launch your next project together.
             </p>
-            <a href="/signup" className="cursor-pointer">
-              <button className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all transform hover:scale-105 shadow-lg cursor-pointer w-full sm:w-auto">
-                Join the Network
-              </button>
-            </a>
+            <button 
+              onClick={onJoinClick}
+              className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all transform hover:scale-105 shadow-lg cursor-pointer w-full sm:w-auto"
+            >
+              Join the Network
+            </button>
             <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 lg:gap-6 text-xs sm:text-sm mt-4 sm:mt-6">
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-white mr-2" fill="currentColor" viewBox="0 0 20 20">

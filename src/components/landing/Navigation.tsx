@@ -6,9 +6,10 @@ import { ArrowRight, Network } from "lucide-react";
 
 interface NavigationProps {
   scrollToSection: (id: string) => void;
+  onJoinClick?: () => void;
 }
 
-export function Navigation({ scrollToSection }: NavigationProps) {
+export function Navigation({ scrollToSection, onJoinClick }: NavigationProps) {
   return (
     <nav className="border-b border-gray-200/50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
@@ -44,13 +45,15 @@ export function Navigation({ scrollToSection }: NavigationProps) {
           <Link href="/signin" className="cursor-pointer hidden sm:block">
             <Button variant="ghost" size="sm" className="cursor-pointer text-xs sm:text-sm">Sign in</Button>
           </Link>
-          <Link href="/signup" className="cursor-pointer">
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer text-xs sm:text-sm px-3 sm:px-4">
-              <span className="hidden sm:inline">Join Now</span>
-              <span className="sm:hidden">Join</span>
-              <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
-          </Link>
+          <Button 
+            size="sm" 
+            className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer text-xs sm:text-sm px-3 sm:px-4"
+            onClick={onJoinClick}
+          >
+            <span className="hidden sm:inline">Join Now</span>
+            <span className="sm:hidden">Join</span>
+            <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
+          </Button>
         </div>
       </div>
     </nav>

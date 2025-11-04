@@ -1,0 +1,393 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createClient } from "@/lib/supabase/client";
+import { Network, Loader2, Eye, EyeOff } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/navigation";
+
+type Props = {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onAuthSuccess?: () => void;
+};
+
+export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) {
+  const [checking, setChecking] = useState(true);
+  const [activeTab, setActiveTab] = useState("signup");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [signupData, setSignupData] = useState({ email: "", password: "", name: "" });
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const supabase = createClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!open) {
+      setError(null);
+      setSignupData({ email: "", password: "", name: "" });
+      setLoginData({ email: "", password: "" });
+      return;
+    }
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        onAuthSuccess?.();
+        onOpenChange(false);
+      } else {
+        setChecking(false);
+      }
+    });
+  }, [open, onAuthSuccess, onOpenChange, supabase]);
+
+  async function handleGoogleLogin() {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: "select_account",
+        },
+      },
+    });
+  }
+
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: signupData.email,
+        password: signupData.password,
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!authData.user) {
+        setError("Failed to create account. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Get user's photo from Google if available (for OAuth users)
+      const photoUrl = authData.user.user_metadata?.avatar_url || authData.user.user_metadata?.picture || null;
+
+      // Create profile in profiles table
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert({
+          id: authData.user.id,
+          name: signupData.name,
+          email: signupData.email,
+          photo_url: photoUrl,
+          bio: "",
+          skills: [],
+        });
+
+      if (profileError) {
+        setError(profileError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Success - redirect to dashboard
+      onOpenChange(false);
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
+  }
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: loginData.email,
+        password: loginData.password,
+      });
+
+      if (signInError) {
+        setError(signInError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        // Success - redirect to dashboard
+        onOpenChange(false);
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader className="text-center pb-0">
+          <div className="flex flex-col items-center mb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Network className="h-6 w-6 text-white" />
+                </div>
+              </div>
+              
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                    Network
+                  </span>
+                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                    Node
+                  </span>
+                </div>
+                <div className="text-xs text-gray-500 font-medium tracking-wide">
+                  Connect & Build
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <div className="space-y-4 pt-1">
+          {checking ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            </div>
+          ) : (
+            <>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                  <TabsTrigger value="login">Log In</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="signup" className="space-y-4 mt-4">
+                  <form onSubmit={handleSignup} className="space-y-4">
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label htmlFor="signup-name" className="text-sm font-medium">
+                        Name
+                      </label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        required
+                        value={signupData.name}
+                        onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                        placeholder="Your full name"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="signup-email" className="text-sm font-medium">
+                        Email
+                      </label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        required
+                        value={signupData.email}
+                        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                        placeholder="your@email.com"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="signup-password" className="text-sm font-medium">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          id="signup-password"
+                          type={showSignupPassword ? "text" : "password"}
+                          required
+                          minLength={6}
+                          value={signupData.password}
+                          onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                          placeholder="••••••••"
+                          disabled={loading}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowSignupPassword(!showSignupPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          disabled={loading}
+                        >
+                          {showSignupPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        "Create Account"
+                      )}
+                    </Button>
+                  </form>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    <FcGoogle size={20} /> Continue with Google
+                  </Button>
+                </TabsContent>
+
+                <TabsContent value="login" className="space-y-4 mt-4">
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label htmlFor="login-email" className="text-sm font-medium">
+                        Email
+                      </label>
+                      <Input
+                        id="login-email"
+                        type="email"
+                        required
+                        value={loginData.email}
+                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                        placeholder="your@email.com"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="login-password" className="text-sm font-medium">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          id="login-password"
+                          type={showLoginPassword ? "text" : "password"}
+                          required
+                          value={loginData.password}
+                          onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                          placeholder="••••••••"
+                          disabled={loading}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowLoginPassword(!showLoginPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          disabled={loading}
+                        >
+                          {showLoginPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Signing in...
+                        </>
+                      ) : (
+                        "Sign In"
+                      )}
+                    </Button>
+                  </form>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    <FcGoogle size={20} /> Continue with Google
+                  </Button>
+                </TabsContent>
+              </Tabs>
+
+              <div className="text-center">
+                <p className="text-sm text-gray-600 font-medium">
+                  Join the Network & Start Building 🚀 
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Connect with builders, find co-founders, and land your next job
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

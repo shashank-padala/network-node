@@ -4,7 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Network, ArrowRight } from "lucide-react";
 
-export function CTA() {
+interface CTAProps {
+  onJoinClick?: () => void;
+}
+
+export function CTA({ onJoinClick }: CTAProps) {
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -20,12 +24,13 @@ export function CTA() {
               Join builders, find co-founders, and land your next job. Connect with brilliant minds and turn conversations into meaningful collaborations.
             </p>
             <div className="flex justify-center mb-6 sm:mb-8 lg:mb-10">
-              <Link href="/signup" className="cursor-pointer">
-                <button className="group inline-flex items-center justify-center bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer w-full sm:w-auto">
-                  Join the Network
-                  <ArrowRight className="ml-2 sm:ml-3 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
+              <button 
+                onClick={onJoinClick}
+                className="group inline-flex items-center justify-center bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer w-full sm:w-auto"
+              >
+                Join the Network
+                <ArrowRight className="ml-2 sm:ml-3 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
             <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6 justify-center text-xs sm:text-sm">
               <div className="flex items-center">
