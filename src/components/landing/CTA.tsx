@@ -19,18 +19,13 @@ export function CTA() {
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 lg:mb-10 opacity-95 max-w-2xl mx-auto leading-relaxed px-2">
               Join builders, find co-founders, and land your next job. Connect with brilliant minds and turn conversations into meaningful collaborations.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8 lg:mb-10">
+            <div className="flex justify-center mb-6 sm:mb-8 lg:mb-10">
               <Link href="/signup" className="cursor-pointer">
                 <button className="group inline-flex items-center justify-center bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer w-full sm:w-auto">
                   Join the Network
                   <ArrowRight className="ml-2 sm:ml-3 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
-              <a href="#features" className="cursor-pointer">
-                <button className="inline-flex items-center justify-center bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 cursor-pointer w-full sm:w-auto">
-                  Explore Features
-                </button>
-              </a>
             </div>
             <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6 justify-center text-xs sm:text-sm">
               <div className="flex items-center">
