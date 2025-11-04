@@ -38,18 +38,27 @@ export function Hero() {
             {/* Badge */}
             <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-green-100 text-green-700 rounded-full text-xs sm:text-sm font-semibold">
               <Network className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-              Find people, build startups, land jobs & more.
+              Every builder is a node in the network.
               <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 ml-1.5 sm:ml-2" />
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight text-gray-900">
-              Every builder is a <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">node</span> in the <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">network</span>.
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900">
+              {/* Mobile: One sentence */}
+              <div className="block sm:hidden">
+                Find <span className="text-blue-600">People</span>. Build <span className="text-blue-600">Startups</span>. Land <span className="text-blue-600">Jobs</span>.
+              </div>
+              {/* Desktop: Separate lines */}
+              <div className="hidden sm:block space-y-1 sm:space-y-2">
+                <div>Find <span className="text-blue-600">People</span></div>
+                <div>Build <span className="text-blue-600">Startups</span></div>
+                <div>Land <span className="text-blue-600">Jobs</span></div>
+              </div>
             </h1>
 
             {/* Subheadline */}
             <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-2xl">
-              Discover brilliant minds, collaborate on projects, and build the future — all in one powerful network. Connect with builders, find co-founders, and launch together.
+              Discover brilliant minds, collaborate on projects, and build the future — all in one powerful network. Connect with builders, find co-founders, and launch your dream startup.
             </p>
 
             {/* CTA */}
