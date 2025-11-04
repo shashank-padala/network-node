@@ -21,7 +21,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
   const [activeTab, setActiveTab] = useState("signup");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [signupData, setSignupData] = useState({ email: "", password: "", name: "" });
+  const [signupData, setSignupData] = useState({ email: "", password: "" });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -31,7 +31,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
   useEffect(() => {
     if (!open) {
       setError(null);
-      setSignupData({ email: "", password: "", name: "" });
+      setSignupData({ email: "", password: "" });
       setLoginData({ email: "", password: "" });
       return;
     }
@@ -81,28 +81,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
         return;
       }
 
-      // Get user's photo from Google if available (for OAuth users)
-      const photoUrl = authData.user.user_metadata?.avatar_url || authData.user.user_metadata?.picture || null;
-
-      // Create profile in profiles table
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert({
-          id: authData.user.id,
-          name: signupData.name,
-          email: signupData.email,
-          photo_url: photoUrl,
-          bio: "",
-          skills: [],
-        });
-
-      if (profileError) {
-        setError(profileError.message);
-        setLoading(false);
-        return;
-      }
-
-      // Success - redirect to dashboard
+      // Success - redirect to dashboard (profile will be created in ProfileCompletionModal)
       onOpenChange(false);
       router.push("/dashboard");
       router.refresh();
@@ -168,6 +147,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
               </div>
             </div>
           </div>
+          <DialogTitle className="sr-only">Sign in to NetworkNode</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-1">
@@ -190,21 +170,6 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
                         {error}
                       </div>
                     )}
-
-                    <div className="space-y-2">
-                      <label htmlFor="signup-name" className="text-sm font-medium">
-                        Name
-                      </label>
-                      <Input
-                        id="signup-name"
-                        type="text"
-                        required
-                        value={signupData.name}
-                        onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
-                        placeholder="Your full name"
-                        disabled={loading}
-                      />
-                    </div>
 
                     <div className="space-y-2">
                       <label htmlFor="signup-email" className="text-sm font-medium">
