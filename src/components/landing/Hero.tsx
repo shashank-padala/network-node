@@ -23,7 +23,7 @@ export function Hero() {
             {/* Badge */}
             <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
               <Network className="w-4 h-4 mr-2" />
-              NetworkNode
+              Find People, Build Startups, Land Jobs, and more
               <Sparkles className="w-4 h-4 ml-2" />
             </div>
 

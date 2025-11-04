@@ -17,7 +17,7 @@ export function CTA() {
               Ready to Plug Into<br />the Network?
             </h2>
             <p className="text-lg md:text-xl mb-10 opacity-95 max-w-2xl mx-auto leading-relaxed">
-              Join builders, find co-founders, and launch your next project. Connect with brilliant minds and turn conversations into meaningful collaborations.
+              Join builders, find co-founders, and land your next job. Connect with brilliant minds and turn conversations into meaningful collaborations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <Link href="/signup" className="cursor-pointer">
