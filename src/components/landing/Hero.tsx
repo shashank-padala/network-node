@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Network, Sparkles } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 sm:py-16 lg:py-20 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-40">
         <div className="absolute inset-0" style={{
@@ -15,86 +16,77 @@ export function Hero() {
         }}></div>
       </div>
       
-      <div className="relative max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           
-          {/* Left Content */}
-          <div className="space-y-8">
+          {/* Right Visual - Show first on mobile */}
+          <div className="relative order-1 lg:order-2">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200/50 bg-gradient-to-br from-green-50 to-blue-50">
+              <Image
+                src="/ns.jpg"
+                alt="NetworkNode - Builders connecting and collaborating"
+                className="w-full h-auto"
+                width={800}
+                height={600}
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Left Content - Show second on mobile */}
+          <div className="space-y-6 sm:space-y-8 order-2 lg:order-1">
             {/* Badge */}
-            <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-              <Network className="w-4 h-4 mr-2" />
-              Find People, Build Startups, Land Jobs, and more
-              <Sparkles className="w-4 h-4 ml-2" />
+            <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-green-100 text-green-700 rounded-full text-xs sm:text-sm font-semibold">
+              <Network className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+              Find people, build startups, land jobs & more.
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 ml-1.5 sm:ml-2" />
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight text-gray-900">
-              Every builder is a node.<br />
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Together, we form the network.
-              </span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight text-gray-900">
+              Every builder is a <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">node</span> in the <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">network</span>.
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-2xl">
               Discover brilliant minds, collaborate on projects, and build the future — all in one powerful network. Connect with builders, find co-founders, and launch together.
             </p>
 
             {/* CTA */}
-            <div className="pt-4">
+            <div className="pt-2 sm:pt-4">
               <Link href="/signup" className="cursor-pointer">
                 <button
-                  className="group inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-10 py-5 rounded-2xl font-bold text-xl transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer"
+                  className="group inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-6 py-3 sm:px-8 sm:py-4 lg:px-10 lg:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl cursor-pointer w-full sm:w-auto"
                 >
                   Join the Network
                   <ArrowRight
-                    className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform"
+                    className="ml-2 sm:ml-3 w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform"
                   />
                 </button>
               </Link>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-6 pt-4 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 lg:gap-6 pt-2 sm:pt-4 text-xs sm:text-sm text-gray-600">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-1.5 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                 </svg>
-                Free to join
+                <span className="whitespace-nowrap">Network with Leaders</span>
               </div>
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-1.5 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                 </svg>
-                Find co-founders
+                <span className="whitespace-nowrap">Build Startups</span>
               </div>
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-1.5 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                 </svg>
-                Launch together
+                <span className="whitespace-nowrap">Land Dream Jobs</span>
               </div>
             </div>
-          </div>
-
-          {/* Right Visual Placeholder */}
-          <div className="relative">
-            <div className="relative bg-white rounded-3xl shadow-2xl p-8 transform rotate-2 hover:rotate-0 transition-transform duration-300">
-              <div className="w-full h-96 bg-gradient-to-br from-blue-100 to-green-100 rounded-2xl flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <Network className="w-24 h-24 mx-auto text-blue-600" />
-                  <p className="text-gray-700 font-semibold text-lg">Builder Network</p>
-                </div>
-              </div>
-              
-              {/* Floating Badge */}
-              <div className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-600 to-green-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                🚀 Launch Ready
-              </div>
-            </div>
-            
-            {/* Background Decoration */}
-            <div className="absolute -z-10 top-4 left-4 w-full h-full bg-gradient-to-br from-blue-200 to-green-200 rounded-3xl"></div>
           </div>
         </div>
       </div>

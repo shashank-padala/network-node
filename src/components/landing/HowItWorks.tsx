@@ -35,33 +35,33 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-16 sm:py-24 bg-white">
-      <div className="container mx-auto px-4">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gray-900">Set Up in Minutes — No Installation Required</h2>
-        <p className="text-lg text-gray-600">Get your profile live in three simple steps</p>
+    <section id="how-it-works" className="py-12 sm:py-16 lg:py-24 bg-white">
+      <div className="container mx-auto px-4 sm:px-6">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-gray-900 px-4">Set Up in Minutes — No Installation Required</h2>
+        <p className="text-base sm:text-lg text-gray-600">Get your profile live in three simple steps</p>
       </div>
-        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div key={index} className="relative">
-                <div className={`absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full ${step.numberBg} text-white flex items-center justify-center font-bold text-lg shadow-lg z-10`}>
+                <div className={`absolute -top-4 sm:-top-6 left-1/2 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full ${step.numberBg} text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-lg z-10`}>
                   {step.number}
                 </div>
-                <Card className="text-center bg-white border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 pt-10 h-full flex flex-col">
+                <Card className="text-center bg-white border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 pt-8 sm:pt-10 h-full flex flex-col">
                   <CardHeader className="flex-1 flex flex-col items-center">
-                    <div className={`w-16 h-16 bg-gradient-to-r ${
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${
                       index % 2 === 0
                         ? "from-blue-500 to-indigo-600"
                         : "from-green-500 to-emerald-600"
-                    } rounded-2xl flex items-center justify-center mx-auto mb-6`}>
-                      <Icon className="w-8 h-8 text-white" />
+                    } rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6`}>
+                      <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <CardTitle className="text-xl font-bold text-gray-900 mb-4">{step.title}</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">{step.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-base text-gray-600 leading-relaxed">
+                    <CardDescription className="text-sm sm:text-base text-gray-600 leading-relaxed">
                       {step.description}
                     </CardDescription>
                   </CardContent>
