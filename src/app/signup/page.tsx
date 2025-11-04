@@ -14,13 +14,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Network, ArrowLeft } from "lucide-react";
+import { Network, ArrowLeft, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+
+// Common country codes for WhatsApp
+const COUNTRY_CODES = [
+  { value: "+1", label: "+1 (US/Canada)" },
+  { value: "+44", label: "+44 (UK)" },
+  { value: "+91", label: "+91 (India)" },
+  { value: "+86", label: "+86 (China)" },
+  { value: "+81", label: "+81 (Japan)" },
+  { value: "+49", label: "+49 (Germany)" },
+  { value: "+33", label: "+33 (France)" },
+  { value: "+61", label: "+61 (Australia)" },
+  { value: "+55", label: "+55 (Brazil)" },
+  { value: "+52", label: "+52 (Mexico)" },
+];
 
 export default function SignUpPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
     photo: "",
     bio: "",
     skills: "",
@@ -28,15 +44,75 @@ export default function SignUpPage() {
     twitter: "",
     github: "",
     calendly: "",
-    meetingSpot: "",
+    whatsappCountryCode: "",
+    whatsappNumber: "",
+    discord: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with Supabase
-    console.log("Form submitted:", formData);
-    // On success, redirect to dashboard
-    router.push("/dashboard");
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Sign up with Supabase Auth
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!authData.user) {
+        setError("Failed to create account. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Parse skills array
+      const skillsArray = formData.skills
+        ? formData.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+
+      // Create profile in profiles table
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert({
+          id: authData.user.id,
+          name: formData.name,
+          email: formData.email,
+          photo_url: formData.photo || null,
+          bio: formData.bio,
+          skills: skillsArray,
+          linkedin_url: formData.linkedin || null,
+          twitter_url: formData.twitter || null,
+          github_url: formData.github || null,
+          calendly_url: formData.calendly || null,
+          whatsapp_country_code: formData.whatsappCountryCode || null,
+          whatsapp_number: formData.whatsappNumber || null,
+          discord_username: formData.discord || null,
+        });
+
+      if (profileError) {
+        setError(profileError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Redirect to dashboard
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -71,6 +147,12 @@ export default function SignUpPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
                   Name *
@@ -82,6 +164,7 @@ export default function SignUpPage() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Your full name"
+                  disabled={loading}
                 />
               </div>
 
@@ -97,6 +180,24 @@ export default function SignUpPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your@email.com"
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password *
+                </label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  disabled={loading}
+                  minLength={6}
                 />
               </div>
 
@@ -111,6 +212,7 @@ export default function SignUpPage() {
                   value={formData.photo}
                   onChange={handleChange}
                   placeholder="https://..."
+                  disabled={loading}
                 />
               </div>
 
@@ -126,6 +228,7 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   className="min-h-[100px]"
                   placeholder="Tell us about yourself, what you're building, and what you're looking for..."
+                  disabled={loading}
                 />
               </div>
 
@@ -139,6 +242,7 @@ export default function SignUpPage() {
                   value={formData.skills}
                   onChange={handleChange}
                   placeholder="React, TypeScript, Design, Marketing..."
+                  disabled={loading}
                 />
               </div>
 
@@ -154,6 +258,7 @@ export default function SignUpPage() {
                     value={formData.linkedin}
                     onChange={handleChange}
                     placeholder="https://linkedin.com/in/..."
+                    disabled={loading}
                   />
                 </div>
 
@@ -168,6 +273,7 @@ export default function SignUpPage() {
                     value={formData.twitter}
                     onChange={handleChange}
                     placeholder="https://twitter.com/..."
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -183,6 +289,7 @@ export default function SignUpPage() {
                   value={formData.github}
                   onChange={handleChange}
                   placeholder="https://github.com/..."
+                  disabled={loading}
                 />
               </div>
 
@@ -197,35 +304,78 @@ export default function SignUpPage() {
                   value={formData.calendly}
                   onChange={handleChange}
                   placeholder="https://calendly.com/..."
+                  disabled={loading}
                 />
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="whatsappCountryCode" className="text-sm font-medium">
+                    WhatsApp Country Code
+                  </label>
+                  <Select
+                    value={formData.whatsappCountryCode}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, whatsappCountryCode: value })
+                    }
+                    disabled={loading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select code" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COUNTRY_CODES.map((code) => (
+                        <SelectItem key={code.value} value={code.value}>
+                          {code.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="whatsappNumber" className="text-sm font-medium">
+                    WhatsApp Number
+                  </label>
+                  <Input
+                    id="whatsappNumber"
+                    name="whatsappNumber"
+                    type="tel"
+                    value={formData.whatsappNumber}
+                    onChange={handleChange}
+                    placeholder="1234567890"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <label htmlFor="meetingSpot" className="text-sm font-medium">
-                  Preferred Meeting Spot
+                <label htmlFor="discord" className="text-sm font-medium">
+                  Discord Username
                 </label>
-                <Select
-                  value={formData.meetingSpot}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, meetingSpot: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ns-cafe">NS Café</SelectItem>
-                    <SelectItem value="lounge-13f">Lounge 13F</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="discord"
+                  name="discord"
+                  type="text"
+                  value={formData.discord}
+                  onChange={handleChange}
+                  placeholder="username#1234"
+                  disabled={loading}
+                />
               </div>
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-full py-6"
               >
-                Create Profile & Join Network
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Create Profile & Join Network"
+                )}
               </Button>
             </form>
 
