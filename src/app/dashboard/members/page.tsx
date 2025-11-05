@@ -117,7 +117,7 @@ export default function MembersPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProfiles.map((profile) => (
-            <Card key={profile.id} className="rounded-2xl transition-smooth">
+            <Card key={profile.id} className="rounded-2xl">
               <CardHeader>
                 <div className="flex items-center gap-4 mb-4">
                   {profile.photo_url ? (
@@ -127,7 +127,7 @@ export default function MembersPage() {
                       className="w-16 h-16 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-xl font-bold text-white">
+                    <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold text-white shadow-sm">
                       {getInitials(profile.name)}
                     </div>
                   )}

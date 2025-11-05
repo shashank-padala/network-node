@@ -19,9 +19,9 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?error=auth_failed`);
   }
 
-  // Redirect to dashboard - cookies are already set by exchangeCodeForSession
+  // Redirect to members page - cookies are already set by exchangeCodeForSession
   // Middleware is excluded from this route to prevent cookie header size issues
-  return NextResponse.redirect(`${origin}/dashboard`, {
+  return NextResponse.redirect(`${origin}/dashboard/members`, {
     status: 303, // Use 303 See Other for redirects after POST-like operations
   });
 }

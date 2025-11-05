@@ -84,7 +84,7 @@ export default function StartupsPage() {
           </p>
         </div>
         <Button
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+          className="cursor-pointer"
           asChild
         >
           <Link href="/dashboard/startups/new">
@@ -107,7 +107,7 @@ export default function StartupsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {startups.map((startup) => (
-            <Card key={startup.id} className="rounded-2xl transition-smooth">
+            <Card key={startup.id} className="rounded-2xl">
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 shadow-sm">

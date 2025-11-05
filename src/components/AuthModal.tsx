@@ -102,9 +102,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
         return;
       }
 
-      // Success - redirect to dashboard (profile will be created in ProfileCompletionModal)
+      // Success - redirect to members page (profile will be created in ProfileCompletionModal)
       onOpenChange(false);
-      router.push("/dashboard");
+      router.push("/dashboard/members");
       router.refresh();
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -130,9 +130,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
       }
 
       if (data.user) {
-        // Success - redirect to dashboard
+        // Success - redirect to members page
         onOpenChange(false);
-        router.push("/dashboard");
+        router.push("/dashboard/members");
         router.refresh();
       }
     } catch (err) {

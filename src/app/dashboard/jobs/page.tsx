@@ -90,7 +90,7 @@ export default function JobsPage() {
           </p>
         </div>
         <Button
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+          className="cursor-pointer"
           asChild
         >
           <Link href="/dashboard/jobs/new">
@@ -113,7 +113,7 @@ export default function JobsPage() {
       ) : (
         <div className="space-y-6">
           {jobs.map((job) => (
-            <Card key={job.id} className="rounded-2xl transition-smooth">
+            <Card key={job.id} className="rounded-2xl">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

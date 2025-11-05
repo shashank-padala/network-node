@@ -147,7 +147,7 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      <Card className="rounded-2xl transition-smooth">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap-2">
             <Settings className="h-6 w-6" />
@@ -173,7 +173,7 @@ export default function ProfilePage() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
+              <label htmlFor="name" className="text-sm font-medium text-gray-700">
                 Name *
               </label>
               <Input
@@ -187,7 +187,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="bio" className="text-sm font-medium">
+              <label htmlFor="bio" className="text-sm font-medium text-gray-700">
                 Bio *
               </label>
               <Textarea
@@ -202,7 +202,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="skills" className="text-sm font-medium">
+              <label htmlFor="skills" className="text-sm font-medium text-gray-700">
                 Skills (comma-separated)
               </label>
               <Input
@@ -217,7 +217,7 @@ export default function ProfilePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="linkedin" className="text-sm font-medium">
+                <label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
                   LinkedIn
                 </label>
                 <Input
@@ -232,7 +232,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="twitter" className="text-sm font-medium">
+                <label htmlFor="twitter" className="text-sm font-medium text-gray-700">
                   Twitter/X
                 </label>
                 <Input
@@ -248,7 +248,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="github" className="text-sm font-medium">
+              <label htmlFor="github" className="text-sm font-medium text-gray-700">
                 GitHub
               </label>
               <Input
@@ -263,7 +263,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="calendly" className="text-sm font-medium">
+              <label htmlFor="calendly" className="text-sm font-medium text-gray-700">
                 Calendly Link
               </label>
               <Input
@@ -279,7 +279,7 @@ export default function ProfilePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label htmlFor="whatsappCountryCode" className="text-sm font-medium">
+                <label htmlFor="whatsappCountryCode" className="text-sm font-medium text-gray-700">
                   WhatsApp Country Code
                 </label>
                 <Select
@@ -302,7 +302,7 @@ export default function ProfilePage() {
                 </Select>
               </div>
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="whatsappNumber" className="text-sm font-medium">
+                <label htmlFor="whatsappNumber" className="text-sm font-medium text-gray-700">
                   WhatsApp Number
                 </label>
                 <Input
@@ -318,7 +318,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="discord" className="text-sm font-medium">
+              <label htmlFor="discord" className="text-sm font-medium text-gray-700">
                 Discord Username
               </label>
               <Input
@@ -335,7 +335,7 @@ export default function ProfilePage() {
             <Button
               type="submit"
               disabled={saving}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              className="cursor-pointer"
             >
               {saving ? (
                 <>
