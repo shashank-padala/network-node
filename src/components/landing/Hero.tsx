@@ -25,7 +25,7 @@ export function Hero({ onJoinClick }: HeroProps) {
           <div className="relative order-1 lg:order-2">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200/50 bg-gradient-to-br from-green-50 to-blue-50">
               <Image
-                src="/ns.jpg"
+                src="/hero.jpg"
                 alt="NetworkNode - Builders connecting and collaborating"
                 className="w-full h-auto"
                 width={800}
