@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Search, Calendar, Loader2 } from "lucide-react";
+import { Users, Search, Calendar, Loader2, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { MeetingRequestModal } from "@/components/MeetingRequestModal";
@@ -124,11 +124,11 @@ export default function MembersPage() {
                     <img
                       src={profile.photo_url}
                       alt={profile.name}
-                      className="w-16 h-16 rounded-full object-cover"
+                      className="w-16 h-16 rounded-full object-cover border border-gray-200"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold text-white shadow-sm">
-                      {getInitials(profile.name)}
+                    <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shadow-sm">
+                      <User className="w-8 h-8 text-gray-400" />
                     </div>
                   )}
                   <div>
