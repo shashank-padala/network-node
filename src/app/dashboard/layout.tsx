@@ -17,7 +17,6 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import ProfileCompletionModal from "@/components/ProfileCompletionModal";
 import { ProfileBlockingDialog } from "@/components/ProfileBlockingDialog";
 import { checkProfileCompletion } from "@/lib/profile-utils";
 
@@ -38,7 +37,6 @@ export default function DashboardLayout({
   const { user, signOut } = useAuth();
   const supabase = createClient();
   const router = useRouter();
-  const [showProfileModal, setShowProfileModal] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
   const [showBlockingDialog, setShowBlockingDialog] = useState(false);
   const [profileComplete, setProfileComplete] = useState(false);
@@ -58,8 +56,10 @@ export default function DashboardLayout({
           .single();
 
         if (error || !data) {
-          // Profile doesn't exist, show modal
-          setShowProfileModal(true);
+          // Profile should always exist due to database trigger, but if it doesn't,
+          // something went wrong - refresh to retry
+          console.error("Profile not found - trigger may have failed:", error);
+          router.refresh();
           setCheckingProfile(false);
           return;
         }
@@ -89,11 +89,6 @@ export default function DashboardLayout({
       setCheckingProfile(false);
     }
   }, [user, supabase, pathname]);
-
-  const handleProfileComplete = () => {
-    setShowProfileModal(false);
-    router.refresh();
-  };
 
   const handleLogout = async () => {
     await signOut();
@@ -251,32 +246,26 @@ export default function DashboardLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col transition-all duration-300 md:ml-64">
         {/* Mobile Menu Button */}
-        <div className="md:hidden fixed top-4 right-4 z-50">
+        <div className="md:hidden fixed top-3 right-3 z-50">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSidebarOpen(true)}
-            className="p-2 bg-background/95 backdrop-blur shadow-md"
+            className="p-2.5 bg-background/95 backdrop-blur shadow-lg border border-gray-200"
           >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Open menu</span>
           </Button>
         </div>
 
-        <main className="flex-1 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 p-3 sm:p-4 md:p-6 pt-14 md:pt-6">{children}</main>
       </div>
 
       {!checkingProfile && (
-        <>
-          <ProfileCompletionModal
-            open={showProfileModal}
-            onClose={handleProfileComplete}
-          />
-          <ProfileBlockingDialog 
-            open={showBlockingDialog} 
-            onClose={() => setShowBlockingDialog(false)}
-          />
-        </>
+        <ProfileBlockingDialog 
+          open={showBlockingDialog} 
+          onClose={() => setShowBlockingDialog(false)}
+        />
       )}
     </div>
   );

@@ -11,6 +11,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   ...METADATA_DEFAULT,
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  },
 };
 
 export default function RootLayout({

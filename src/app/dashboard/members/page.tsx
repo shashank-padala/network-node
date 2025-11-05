@@ -102,20 +102,20 @@ export default function MembersPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Member Directory</h1>
-        <p className="text-muted-foreground">
+    <div className="max-w-6xl mx-auto w-full">
+      <div className="mb-4 sm:mb-6 md:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Member Directory</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Discover who&apos;s building around you at Network School
         </p>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
           <Input
             placeholder="Search by name, skills, or interests..."
-            className="pl-10"
+            className="pl-9 sm:pl-10 text-sm sm:text-base h-10 sm:h-11"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -123,41 +123,41 @@ export default function MembersPage() {
       </div>
 
       {filteredProfiles.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
+        <div className="text-center py-8 sm:py-12">
+          <p className="text-sm sm:text-base text-muted-foreground">
             {searchQuery ? "No members found matching your search." : "No members found."}
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {filteredProfiles.map((profile) => (
-            <Card key={profile.id} className="rounded-lg">
-              <CardHeader className="pb-4">
-                <div className="flex items-start gap-4">
+            <Card key={profile.id} className="rounded-lg sm:rounded-xl">
+              <CardHeader className="pb-3 sm:pb-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   {/* Profile Photo */}
                   <div className="flex-shrink-0">
                     {profile.photo_url ? (
                       <img
                         src={profile.photo_url}
                         alt={profile.name}
-                        className="w-16 h-16 rounded-full object-cover border border-gray-200"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border border-gray-200"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shadow-sm">
-                        <User className="w-8 h-8 text-gray-400" />
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shadow-sm">
+                        <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                       </div>
                     )}
                   </div>
 
                   {/* Profile Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    <div className="flex items-start justify-between gap-2 sm:gap-4 mb-1 sm:mb-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                           {profile.name}
                         </h3>
                         {profile.bio && (
-                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                          <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 mb-2 sm:mb-3">
                             {profile.bio}
                           </p>
                         )}
@@ -166,11 +166,11 @@ export default function MembersPage() {
 
                     {/* Skills */}
                     {profile.skills && profile.skills.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                         {profile.skills.map((skill, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-1 text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                            className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20"
                           >
                             {skill}
                           </span>
@@ -179,16 +179,16 @@ export default function MembersPage() {
                     )}
 
                     {/* Social Links */}
-                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                       {profile.linkedin_url && (
                         <a
                           href={profile.linkedin_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="LinkedIn"
                         >
-                          <Linkedin className="w-4 h-4" />
+                          <Linkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </a>
                       )}
                       {profile.twitter_url && (
@@ -196,10 +196,10 @@ export default function MembersPage() {
                           href={profile.twitter_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 text-gray-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Twitter/X"
                         >
-                          <Twitter className="w-4 h-4" />
+                          <Twitter className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </a>
                       )}
                       {profile.github_url && (
@@ -207,37 +207,37 @@ export default function MembersPage() {
                           href={profile.github_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
                           title="GitHub"
                         >
-                          <Github className="w-4 h-4" />
+                          <Github className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </a>
                       )}
                       {profile.email && (
                         <a
                           href={`mailto:${profile.email}`}
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Email"
                         >
-                          <Mail className="w-4 h-4" />
+                          <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </a>
                       )}
                       {profile.discord_username && (
                         <button
                           onClick={() => handleDiscordClick(profile.discord_username!)}
-                          className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                           title={`Discord: ${profile.discord_username}`}
                         >
-                          <MessageCircle className="w-4 h-4" />
+                          <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       )}
                       {profile.whatsapp_country_code && profile.whatsapp_number && (
                         <button
                           onClick={() => handleWhatsAppClick(profile.whatsapp_country_code!, profile.whatsapp_number!)}
-                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="WhatsApp"
                         >
-                          <Phone className="w-4 h-4" />
+                          <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       )}
                     </div>
@@ -250,16 +250,17 @@ export default function MembersPage() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="gap-2"
+                              className="gap-1.5 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9"
                               onClick={() => window.open(profile.calendly_url!, "_blank")}
                             >
-                              <Calendar className="w-4 h-4" />
-                              Book Call
+                              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">Book Call</span>
+                              <span className="sm:hidden">Call</span>
                             </Button>
                           )}
                         </>
                       ) : (
-                        <Button variant="outline" size="sm" disabled>
+                        <Button variant="outline" size="sm" disabled className="text-xs sm:text-sm h-8 sm:h-9">
                           Your Profile
                         </Button>
                       )}

@@ -143,26 +143,26 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-center pb-0">
-          <div className="flex flex-col items-center mb-4">
-            <div className="flex items-center gap-3 mb-2">
+          <div className="flex flex-col items-center mb-3 sm:mb-4">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Network className="h-6 w-6 text-white" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Network className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
               </div>
               
               <div className="flex flex-col">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                     Network
                   </span>
-                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                     Node
                   </span>
                 </div>
-                <div className="text-xs text-gray-500 font-medium tracking-wide">
+                <div className="text-[10px] sm:text-xs text-gray-500 font-medium tracking-wide">
                   Connect & Build
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
           <DialogTitle className="sr-only">Sign in to NetworkNode</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 pt-1">
+        <div className="space-y-3 sm:space-y-4 pt-1">
           {checking ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
@@ -184,16 +184,16 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                   <TabsTrigger value="login">Log In</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="signup" className="space-y-4 mt-4">
-                  <form onSubmit={handleSignup} className="space-y-4">
+                <TabsContent value="signup" className="space-y-3 sm:space-y-4 mt-3 sm:mt-4">
+                  <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4">
                     {error && (
-                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm">
                         {error}
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <label htmlFor="signup-name" className="text-sm font-medium">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label htmlFor="signup-name" className="text-xs sm:text-sm font-medium">
                         Full Name
                       </label>
                       <Input
@@ -204,11 +204,12 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                         onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
                         placeholder="John Doe"
                         disabled={loading}
+                        className="h-10 sm:h-11 text-sm sm:text-base"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <label htmlFor="signup-email" className="text-sm font-medium">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label htmlFor="signup-email" className="text-xs sm:text-sm font-medium">
                         Email
                       </label>
                       <Input
@@ -219,11 +220,12 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                         onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                         placeholder="your@email.com"
                         disabled={loading}
+                        className="h-10 sm:h-11 text-sm sm:text-base"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <label htmlFor="signup-password" className="text-sm font-medium">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label htmlFor="signup-password" className="text-xs sm:text-sm font-medium">
                         Password
                       </label>
                       <div className="relative">
@@ -236,7 +238,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                           onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                           placeholder="••••••••"
                           disabled={loading}
-                          className="pr-10"
+                          className="pr-10 h-10 sm:h-11 text-sm sm:text-base"
                         />
                         <button
                           type="button"
@@ -256,11 +258,11 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+                      className="w-full h-10 sm:h-11 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white text-sm sm:text-base"
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Loader2 className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                           Creating account...
                         </>
                       ) : (
@@ -280,27 +282,28 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
 
                   <Button
                     type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
+                    className="w-full flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative h-10 sm:h-11"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
-                    <FcGoogle size={20} /> Continue with Google
-                    <span className="absolute -bottom-2 -right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    <FcGoogle size={18} className="sm:w-5 sm:h-5" /> 
+                    <span>Continue with Google</span>
+                    <span className="absolute -bottom-1.5 -right-1.5 sm:-bottom-2 sm:-right-2 bg-green-600 text-white text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full">
                       Recommended
                     </span>
                   </Button>
                 </TabsContent>
 
-                <TabsContent value="login" className="space-y-4 mt-4">
-                  <form onSubmit={handleLogin} className="space-y-4">
+                <TabsContent value="login" className="space-y-3 sm:space-y-4 mt-3 sm:mt-4">
+                  <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
                     {error && (
-                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm">
                         {error}
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <label htmlFor="login-email" className="text-sm font-medium">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label htmlFor="login-email" className="text-xs sm:text-sm font-medium">
                         Email
                       </label>
                       <Input
@@ -311,11 +314,12 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                         onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                         placeholder="your@email.com"
                         disabled={loading}
+                        className="h-10 sm:h-11 text-sm sm:text-base"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <label htmlFor="login-password" className="text-sm font-medium">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label htmlFor="login-password" className="text-xs sm:text-sm font-medium">
                         Password
                       </label>
                       <div className="relative">
@@ -327,7 +331,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                           onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                           placeholder="••••••••"
                           disabled={loading}
-                          className="pr-10"
+                          className="pr-10 h-10 sm:h-11 text-sm sm:text-base"
                         />
                         <button
                           type="button"
@@ -347,11 +351,11 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+                      className="w-full h-10 sm:h-11 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white text-sm sm:text-base"
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Loader2 className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                           Signing in...
                         </>
                       ) : (
@@ -371,23 +375,24 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
 
                   <Button
                     type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
+                    className="w-full flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative h-10 sm:h-11"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
-                    <FcGoogle size={20} /> Continue with Google
-                    <span className="absolute -bottom-2 -right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    <FcGoogle size={18} className="sm:w-5 sm:h-5" /> 
+                    <span>Continue with Google</span>
+                    <span className="absolute -bottom-1.5 -right-1.5 sm:-bottom-2 sm:-right-2 bg-green-600 text-white text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full">
                       Recommended
                     </span>
                   </Button>
                 </TabsContent>
               </Tabs>
 
-              <div className="text-center">
-                <p className="text-sm text-gray-600 font-medium">
+              <div className="text-center pt-2">
+                <p className="text-xs sm:text-sm text-gray-600 font-medium">
                   Join the Network & Start Building 🚀 
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
                   Connect with builders, find co-founders, or land your next job
                 </p>
               </div>
@@ -398,15 +403,15 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
 
       {/* Email Confirmation Dialog */}
       <Dialog open={showEmailConfirmation} onOpenChange={setShowEmailConfirmation}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[95vw] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center">Check Your Email</DialogTitle>
+            <DialogTitle className="text-center text-base sm:text-lg">Check Your Email</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <svg
-                  className="w-8 h-8 text-blue-600"
+                  className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -419,13 +424,13 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                   />
                 </svg>
               </div>
-              <p className="text-lg font-medium text-gray-900 mb-2">
+              <p className="text-base sm:text-lg font-medium text-gray-900 mb-2">
                 We've sent a confirmation email
               </p>
-              <p className="text-sm text-gray-600 mb-4">
-                Please check your email at <span className="font-semibold">{signupEmail}</span> and click the confirmation link to verify your account.
+              <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 px-2">
+                Please check your email at <span className="font-semibold break-all">{signupEmail}</span> and click the confirmation link to verify your account.
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] sm:text-xs text-gray-500">
                 After confirming your email, you can sign in to continue.
               </p>
             </div>
@@ -436,7 +441,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                 setActiveTab("login");
                 setSignupData({ name: "", email: "", password: "" });
               }}
-              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+              className="w-full h-10 sm:h-11 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white text-sm sm:text-base"
             >
               Got it
             </Button>

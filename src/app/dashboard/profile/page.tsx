@@ -132,27 +132,56 @@ export default function ProfilePage() {
         return;
       }
 
-      const { error: updateError } = await supabase
+      // Profile should always exist due to database trigger on signup
+      // If it doesn't exist, something went wrong - try to create it as fallback
+      const { data: existingProfile } = await supabase
         .from("profiles")
-        .update({
-          name: formData.name,
-          bio: formData.bio || null,
-          skills: formData.skills,
-          linkedin_url: formData.linkedin || null,
-          twitter_url: formData.twitter || null,
-          github_url: formData.github || null,
-          calendly_url: formData.calendly || null,
-          whatsapp_country_code: formData.whatsappCountryCode || null,
-          whatsapp_number: formData.whatsappNumber || null,
-          discord_username: formData.discord || null,
-          open_to_collaborate: formData.openToCollaborate,
-          open_to_jobs: formData.openToJobs,
-          hiring_talent: formData.hiringTalent,
-        })
-        .eq("id", user.id);
+        .select("id")
+        .eq("id", user.id)
+        .single();
 
-      if (updateError) {
-        setError(updateError.message);
+      const profileData: any = {
+        name: formData.name,
+        bio: formData.bio || null,
+        skills: formData.skills,
+        linkedin_url: formData.linkedin || null,
+        twitter_url: formData.twitter || null,
+        github_url: formData.github || null,
+        calendly_url: formData.calendly || null,
+        whatsapp_country_code: formData.whatsappCountryCode || null,
+        whatsapp_number: formData.whatsappNumber || null,
+        discord_username: formData.discord || null,
+        open_to_collaborate: formData.openToCollaborate,
+        open_to_jobs: formData.openToJobs,
+        hiring_talent: formData.hiringTalent,
+      };
+
+      let error;
+      if (existingProfile) {
+        // Update existing profile (normal case)
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update(profileData)
+          .eq("id", user.id);
+        error = updateError;
+      } else {
+        // Fallback: Create profile if trigger somehow failed
+        // This should rarely happen, but handle it gracefully
+        console.warn("Profile not found - creating fallback profile");
+        const { error: insertError } = await supabase
+          .from("profiles")
+          .insert({
+            id: user.id,
+            name: formData.name,
+            email: user.email || "",
+            photo_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            ...profileData,
+          });
+        error = insertError;
+      }
+
+      if (error) {
+        setError(error.message);
         setSaving(false);
         return;
       }
@@ -187,54 +216,54 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto w-full px-3 sm:px-4">
       {/* Header */}
-      <div className="mb-8 text-center space-y-3">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-full mb-4">
-          <User className="h-8 w-8 text-white" />
+      <div className="mb-4 sm:mb-6 md:mb-8 text-center space-y-2 sm:space-y-3">
+        <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-full mb-2 sm:mb-4">
+          <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
           Profile Settings
         </h1>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
           Manage your profile and showcase your skills
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Error/Success Messages */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4" />
+          <div className="bg-green-50 border border-green-200 text-green-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2">
+            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
             Profile updated successfully!
           </div>
         )}
 
         {/* Basic Information Section */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <User className="h-5 w-5 text-blue-600" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+              <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
               </div>
               Basic Information
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-sm sm:text-base">
               Complete these fields to activate your profile
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6">
             {/* Name and Email Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                <label htmlFor="name" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   Full Name *
                 </label>
                 <Input
@@ -245,12 +274,12 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   disabled={saving}
                   placeholder="Enter your full name"
-                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
+                <label htmlFor="email" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   Email Address
                 </label>
                 <Input
@@ -259,19 +288,19 @@ export default function ProfilePage() {
                   type="email"
                   value={formData.email}
                   disabled
-                  className="h-11 border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
+                  className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
                 />
               </div>
             </div>
 
             {/* WhatsApp and Discord Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
+                <label className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   WhatsApp Number *
                 </label>
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-2 sm:gap-3 items-center">
                   <CountryCodeSelect
                     value={formData.whatsappCountryCode}
                     onValueChange={(value) =>
@@ -288,13 +317,13 @@ export default function ProfilePage() {
                     placeholder="Phone number"
                     disabled={saving}
                     required
-                    className="flex-1 h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                    className="flex-1 h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="discord" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4" />
+                <label htmlFor="discord" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   Discord Username *
                 </label>
                 <Input
@@ -306,15 +335,15 @@ export default function ProfilePage() {
                   placeholder="username#1234"
                   disabled={saving}
                   required
-                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
 
             {/* Skills */}
             <div className="space-y-2">
-              <label htmlFor="skills" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Code className="h-4 w-4" />
+              <label htmlFor="skills" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Skills *
               </label>
               <SkillsInput
@@ -328,8 +357,8 @@ export default function ProfilePage() {
 
             {/* Bio */}
             <div className="space-y-2">
-              <label htmlFor="bio" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <FileText className="h-4 w-4" />
+              <label htmlFor="bio" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Bio
               </label>
               <Textarea
@@ -337,12 +366,12 @@ export default function ProfilePage() {
                 name="bio"
                 value={formData.bio}
                 onChange={handleChange}
-                className="min-h-[120px] border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                className="min-h-[100px] sm:min-h-[120px] text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 placeholder="Share a brief introduction about yourself.
 For example: 'I'm a full-stack developer passionate about building scalable web applications. Currently working on a SaaS platform and always open to collaborating on innovative projects.'"
                 disabled={saving}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] sm:text-xs text-gray-500">
                 Optional: Share what you're building, your interests, or what you're looking for
               </p>
             </div>
@@ -351,29 +380,29 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
 
         {/* Availability & Interests Section */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Handshake className="h-5 w-5 text-orange-600" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+              <div className="p-1.5 sm:p-2 bg-orange-100 rounded-lg">
+                <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
               </div>
               Availability & Interests *
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-sm sm:text-base">
               Let others know what you're open to
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             {/* Open to Collaborate */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Handshake className="h-5 w-5 text-blue-600" />
+            <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
+                  <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 cursor-pointer">
+                <div className="flex-1 min-w-0">
+                  <label className="text-xs sm:text-sm font-semibold text-gray-700 cursor-pointer block">
                     Open to collaborate on new projects or startup ideas
                   </label>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
                     Interested in partnering on innovative projects
                   </p>
                 </div>
@@ -397,16 +426,16 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
             </div>
 
             {/* Open to Jobs */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Briefcase className="h-5 w-5 text-green-600" />
+            <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg flex-shrink-0">
+                  <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 cursor-pointer">
+                <div className="flex-1 min-w-0">
+                  <label className="text-xs sm:text-sm font-semibold text-gray-700 cursor-pointer block">
                     Open to new job opportunities
                   </label>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
                     Actively looking for new employment opportunities
                   </p>
                 </div>
@@ -430,16 +459,16 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
             </div>
 
             {/* Hiring Talent */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users className="h-5 w-5 text-purple-600" />
+            <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg flex-shrink-0">
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 cursor-pointer">
+                <div className="flex-1 min-w-0">
+                  <label className="text-xs sm:text-sm font-semibold text-gray-700 cursor-pointer block">
                     Hiring talent
                   </label>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
                     Looking to recruit skilled professionals
                   </p>
                 </div>
@@ -466,22 +495,22 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
 
         {/* Professional Links Section */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Globe className="h-5 w-5 text-green-600" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+              <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
               </div>
               Professional Links
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-sm sm:text-base">
               Connect your professional profiles
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <label htmlFor="linkedin" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Linkedin className="h-4 w-4" />
+                <label htmlFor="linkedin" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Linkedin className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   LinkedIn
                 </label>
                 <Input
@@ -492,13 +521,13 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
                   onChange={handleChange}
                   placeholder="https://linkedin.com/in/..."
                   disabled={saving}
-                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="twitter" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Twitter className="h-4 w-4" />
+                <label htmlFor="twitter" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Twitter className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   Twitter/X
                 </label>
                 <Input
@@ -509,13 +538,13 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
                   onChange={handleChange}
                   placeholder="https://x.com/..."
                   disabled={saving}
-                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="github" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Github className="h-4 w-4" />
+                <label htmlFor="github" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Github className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   GitHub
                 </label>
                 <Input
@@ -526,7 +555,7 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
                   onChange={handleChange}
                   placeholder="https://github.com/..."
                   disabled={saving}
-                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
@@ -535,21 +564,21 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
 
         {/* Contact Information Section */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Phone className="h-5 w-5 text-purple-600" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+              <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
+                <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
               </div>
               Contact Information
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-sm sm:text-base">
               How others can reach you
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <label htmlFor="calendly" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
+              <label htmlFor="calendly" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Meeting Link
               </label>
               <Input
@@ -560,9 +589,9 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
                 onChange={handleChange}
                 placeholder="https://calendly.com/... or https://cal.com/..."
                 disabled={saving}
-                className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] sm:text-xs text-gray-500">
                 Share your Calendly, Cal.com, or any other meeting scheduling link
               </p>
             </div>
@@ -570,24 +599,24 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
           </CardContent>
         </Card>
 
-        <Separator className="my-8" />
+        <Separator className="my-4 sm:my-6 md:my-8" />
 
         {/* Submit Button */}
-        <div className="flex justify-center pb-6">
+        <div className="flex justify-center pb-4 sm:pb-6">
           <Button
             type="submit"
             disabled={saving}
             size="lg"
-            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {saving ? (
               <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 animate-spin" />
                 Saving...
               </>
             ) : (
               <>
-                <Save className="h-5 w-5 mr-2" />
+                <Save className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 Save Profile
               </>
             )}
