@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { METADATA_DEFAULT } from "@/constants/metadata";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -9,8 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NetworkNode - The Builder Graph",
-  description: "Connect, collaborate, and launch with builders, founders, and creators",
+  ...METADATA_DEFAULT,
 };
 
 export default function RootLayout({
