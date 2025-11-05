@@ -8,7 +8,6 @@ interface FooterProps {
 }
 
 export function Footer({ onJoinClick }: FooterProps) {
-  const year = new Date().getFullYear();
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
@@ -97,11 +96,14 @@ export function Footer({ onJoinClick }: FooterProps) {
       {/* Bottom Bar */}
       <div className="border-t border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center">
+          <div className="flex flex-col items-center gap-3 text-center">
             <p className="text-gray-400 text-xs sm:text-sm">
-              &copy; {year} NetworkNode — Built by builders for builders.
+              &copy; 2025 NetworkNode — All Rights Reserved
             </p>
-            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm">
+            <p className="text-gray-500 text-xs sm:text-sm">
+              Built by builders for builders
+            </p>
+            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm mt-2">
               <Link href="/privacy" className="text-gray-400 hover:text-green-400 transition-colors">
                 Privacy Policy
               </Link>
