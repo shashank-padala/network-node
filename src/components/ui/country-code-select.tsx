@@ -47,12 +47,17 @@ export function CountryCodeSelect({
         }
       }}
       disabled={disabled}
+      modal={false}
     >
       <SelectPrimitive.Trigger
         className={cn(
-          "flex h-11 w-[140px] items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm focus:shadow-md",
+          "flex h-11 w-[140px] items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm focus:shadow-md touch-manipulation",
           className
         )}
+        onClick={(e) => {
+          // Prevent double-tap zoom on mobile
+          e.preventDefault();
+        }}
       >
         <SelectPrimitive.Value>{selectedLabel}</SelectPrimitive.Value>
         <SelectPrimitive.Icon asChild>
@@ -66,6 +71,15 @@ export function CountryCodeSelect({
           side="bottom"
           align="start"
           sideOffset={4}
+          onInteractOutside={(e) => {
+            // Prevent closing when interacting with elements inside the dropdown
+            const target = e.target as HTMLElement;
+            if (target.closest('[data-radix-select-viewport]') || 
+                target.closest('input') || 
+                target.closest('[role="option"]')) {
+              e.preventDefault();
+            }
+          }}
         >
           {/* Search Input */}
           <div className="p-2 border-b border-gray-200">
@@ -74,7 +88,15 @@ export function CountryCodeSelect({
               <Input
                 ref={(input) => {
                   if (input && open) {
-                    setTimeout(() => input.focus(), 0);
+                    // Delay focus slightly to prevent mobile issues
+                    setTimeout(() => {
+                      input.focus();
+                      // Prevent zoom on iOS
+                      input.setAttribute('readonly', 'readonly');
+                      setTimeout(() => {
+                        input.removeAttribute('readonly');
+                      }, 100);
+                    }, 100);
                   }
                 }}
                 type="text"
@@ -87,12 +109,22 @@ export function CountryCodeSelect({
                     setOpen(false);
                   }
                 }}
+                onPointerDown={(e) => {
+                  // Prevent closing when clicking on input
+                  e.stopPropagation();
+                }}
               />
             </div>
           </div>
 
           {/* Scrollable List */}
-          <SelectPrimitive.Viewport className="p-1 max-h-[240px] overflow-y-auto">
+          <SelectPrimitive.Viewport 
+            className="p-1 max-h-[240px] overflow-y-auto"
+            onPointerDown={(e) => {
+              // Prevent closing when clicking inside viewport
+              e.stopPropagation();
+            }}
+          >
             {filteredCodes.length === 0 ? (
               <div className="py-6 text-center text-sm text-gray-500">
                 No country codes found
@@ -103,8 +135,12 @@ export function CountryCodeSelect({
                   key={code.value}
                   value={code.value}
                   className={cn(
-                    "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-blue-50 focus:text-blue-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                    "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-blue-50 focus:text-blue-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 active:bg-blue-50"
                   )}
+                  onPointerDown={(e) => {
+                    // Prevent event bubbling on mobile
+                    e.stopPropagation();
+                  }}
                 >
                   <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
                     <SelectPrimitive.ItemIndicator>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, KeyboardEvent } from "react";
-import { X } from "lucide-react";
+import { X, Plus } from "lucide-react";
 
 interface SkillsInputProps {
   skills: string[];
@@ -20,14 +20,20 @@ export function SkillsInput({
 }: SkillsInputProps) {
   const [inputValue, setInputValue] = useState("");
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      e.preventDefault();
+  const handleAddSkill = () => {
+    if (inputValue.trim()) {
       const trimmedValue = inputValue.trim();
       if (!skills.includes(trimmedValue)) {
         onChange([...skills, trimmedValue]);
       }
       setInputValue("");
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputValue.trim()) {
+      e.preventDefault();
+      handleAddSkill();
     } else if (e.key === "Backspace" && !inputValue && skills.length > 0) {
       // Remove last skill if backspace is pressed with empty input
       onChange(skills.slice(0, -1));
@@ -61,19 +67,33 @@ export function SkillsInput({
             )}
           </span>
         ))}
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={skills.length === 0 ? placeholder : ""}
-          disabled={disabled}
-          className="flex-1 min-w-[120px] outline-none bg-transparent text-sm placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
-          required={required && skills.length === 0}
-        />
+        <div className="flex items-center gap-2 flex-1 min-w-[120px]">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={skills.length === 0 ? placeholder : ""}
+            disabled={disabled}
+            className="flex-1 outline-none bg-transparent text-sm placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+            required={required && skills.length === 0}
+          />
+          <button
+            type="button"
+            onClick={handleAddSkill}
+            disabled={disabled || !inputValue.trim()}
+            className="flex items-center justify-center w-8 h-8 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex-shrink-0"
+            aria-label="Add skill"
+            title="Add skill"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
       </div>
       {skills.length === 0 && (
-        <p className="text-xs text-gray-500">Type a skill and Press Enter</p>
+        <p className="text-xs text-gray-500">
+          Type a skill and press <span className="hidden sm:inline">Enter</span><span className="sm:hidden">Add</span> button
+        </p>
       )}
     </div>
   );
