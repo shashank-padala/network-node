@@ -67,10 +67,25 @@ export function CountryCodeSelect({
           align="start"
           sideOffset={4}
         >
+          <div 
+            onPointerDown={(e) => {
+              // Prevent all pointer events from bubbling to Radix handlers
+              e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+          >
           {/* Search Input */}
           <div className="p-2 border-b border-gray-200">
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <Input
                 ref={(input) => {
                   if (input && open) {
@@ -95,22 +110,12 @@ export function CountryCodeSelect({
                     setOpen(false);
                   }
                 }}
-                onPointerDown={(e) => {
-                  // Prevent closing when clicking on input
-                  e.stopPropagation();
-                }}
               />
             </div>
           </div>
 
           {/* Scrollable List */}
-          <SelectPrimitive.Viewport 
-            className="p-1 max-h-[240px] overflow-y-auto"
-            onPointerDown={(e) => {
-              // Prevent closing when clicking inside viewport
-              e.stopPropagation();
-            }}
-          >
+          <SelectPrimitive.Viewport className="p-1 max-h-[240px] overflow-y-auto">
             {filteredCodes.length === 0 ? (
               <div className="py-6 text-center text-sm text-gray-500">
                 No country codes found
@@ -123,10 +128,6 @@ export function CountryCodeSelect({
                   className={cn(
                     "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-blue-50 focus:text-blue-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 active:bg-blue-50"
                   )}
-                  onPointerDown={(e) => {
-                    // Prevent event bubbling on mobile
-                    e.stopPropagation();
-                  }}
                 >
                   <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
                     <SelectPrimitive.ItemIndicator>
@@ -138,6 +139,7 @@ export function CountryCodeSelect({
               ))
             )}
           </SelectPrimitive.Viewport>
+          </div>
         </SelectPrimitive.Content>
       </SelectPrimitive.Portal>
     </SelectPrimitive.Root>
