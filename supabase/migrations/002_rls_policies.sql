@@ -91,3 +91,4 @@ CREATE POLICY "Recipients can update meeting requests"
   WITH CHECK (auth.uid() = recipient_id);
 
 
+

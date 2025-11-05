@@ -60,7 +60,7 @@ export function Hero({ onJoinClick }: HeroProps) {
 
             {/* Subheadline */}
             <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-2xl">
-              Discover brilliant minds, collaborate on projects, and build the future — all in one powerful network. Connect with builders, find co-founders, and launch your dream startup.
+              Discover brilliant minds at NS, collaborate on projects, and build the future — all in one powerful network. Connect with builders, find co-founders, and launch your dream startup.
             </p>
 
             {/* CTA */}
