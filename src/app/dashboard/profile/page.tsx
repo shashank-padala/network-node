@@ -30,9 +30,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
 import { SkillsInput } from "@/components/ui/skills-input";
 import { CountryCodeSelect } from "@/components/ui/country-code-select";
+import { checkProfileCompletion } from "@/lib/profile-utils";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -189,10 +192,13 @@ export default function ProfilePage() {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
       
-      // Redirect to members page after successful profile completion
-      setTimeout(() => {
-        window.location.href = "/dashboard/members";
-      }, 1500);
+      // Check if profile is complete and redirect to members page if so
+      const completionStatus = await checkProfileCompletion(user.id);
+      if (completionStatus.isComplete) {
+        setTimeout(() => {
+          router.push("/dashboard/members");
+        }, 1500);
+      }
     } catch (err) {
       setError("An unexpected error occurred");
     } finally {

@@ -245,21 +245,52 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col transition-all duration-300 md:ml-64">
-        {/* Mobile Menu Button */}
-        <div className="md:hidden fixed top-3 right-3 z-50">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-            className="p-2.5 bg-background/95 backdrop-blur shadow-lg border border-gray-200"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </div>
-
-        <main className="flex-1 p-3 sm:p-4 md:p-6 pt-14 md:pt-6">{children}</main>
+        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-20 md:pb-6 md:pt-6">{children}</main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg safe-area-inset-bottom">
+        <div className="grid grid-cols-4 h-16">
+          {navigation.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const isProfilePage = item.href === "/dashboard/profile";
+            const canNavigate = profileComplete || isProfilePage;
+            
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                prefetch={true}
+                onClick={(e) => {
+                  if (!canNavigate && !isProfilePage) {
+                    e.preventDefault();
+                    setShowBlockingDialog(true);
+                  }
+                }}
+                className={cn(
+                  "relative flex flex-col items-center justify-center gap-0.5 transition-colors duration-150 active:bg-gray-50",
+                  isActive
+                    ? "text-blue-600"
+                    : canNavigate
+                    ? "text-gray-600"
+                    : "text-gray-400 opacity-50"
+                )}
+              >
+                <item.icon className={cn("w-5 h-5", isActive && "text-blue-600")} />
+                <span className={cn(
+                  "text-[10px] font-medium leading-tight",
+                  isActive && "text-blue-600 font-semibold"
+                )}>
+                  {item.name}
+                </span>
+                {isActive && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-600 rounded-b-full" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
 
       {!checkingProfile && (
         <ProfileBlockingDialog 
