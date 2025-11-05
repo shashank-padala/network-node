@@ -14,17 +14,20 @@ type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onAuthSuccess?: () => void;
+  initialTab?: "signup" | "login";
 };
 
-export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) {
+export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTab = "signup" }: Props) {
   const [checking, setChecking] = useState(true);
-  const [activeTab, setActiveTab] = useState("signup");
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [signupData, setSignupData] = useState({ email: "", password: "" });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [signupEmail, setSignupEmail] = useState("");
   const supabase = createClient();
   const router = useRouter();
 
@@ -36,6 +39,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
       return;
     }
 
+    // Set the active tab when modal opens
+    setActiveTab(initialTab);
+
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
         onAuthSuccess?.();
@@ -44,7 +50,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
         setChecking(false);
       }
     });
-  }, [open, onAuthSuccess, onOpenChange, supabase]);
+  }, [open, initialTab, onAuthSuccess, onOpenChange, supabase]);
 
   async function handleGoogleLogin() {
     await supabase.auth.signInWithOAuth({
@@ -77,6 +83,15 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
 
       if (!authData.user) {
         setError("Failed to create account. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Check if email confirmation is required
+      if (authData.user && !authData.session) {
+        // Email confirmation required
+        setSignupEmail(signupData.email);
+        setShowEmailConfirmation(true);
         setLoading(false);
         return;
       }
@@ -164,6 +179,24 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
                 </TabsList>
 
                 <TabsContent value="signup" className="space-y-4 mt-4">
+                  <Button
+                    type="button"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    <FcGoogle size={20} /> Continue with Google
+                  </Button>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                  </div>
+
                   <form onSubmit={handleSignup} className="space-y-4">
                     {error && (
                       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -232,6 +265,17 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
                       )}
                     </Button>
                   </form>
+                </TabsContent>
+
+                <TabsContent value="login" className="space-y-4 mt-4">
+                  <Button
+                    type="button"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    <FcGoogle size={20} /> Continue with Google
+                  </Button>
 
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -242,17 +286,6 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
                     </div>
                   </div>
 
-                  <Button
-                    type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                  >
-                    <FcGoogle size={20} /> Continue with Google
-                  </Button>
-                </TabsContent>
-
-                <TabsContent value="login" className="space-y-4 mt-4">
                   <form onSubmit={handleLogin} className="space-y-4">
                     {error && (
                       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -320,24 +353,6 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
                       )}
                     </Button>
                   </form>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                  >
-                    <FcGoogle size={20} /> Continue with Google
-                  </Button>
                 </TabsContent>
               </Tabs>
 
@@ -353,6 +368,54 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: Props) 
           )}
         </div>
       </DialogContent>
+
+      {/* Email Confirmation Dialog */}
+      <Dialog open={showEmailConfirmation} onOpenChange={setShowEmailConfirmation}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Check Your Email</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <p className="text-lg font-medium text-gray-900 mb-2">
+                We've sent a confirmation email
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                Please check your email at <span className="font-semibold">{signupEmail}</span> and click the confirmation link to verify your account.
+              </p>
+              <p className="text-xs text-gray-500">
+                After confirming your email, you can sign in to continue.
+              </p>
+            </div>
+            <Button
+              onClick={() => {
+                setShowEmailConfirmation(false);
+                onOpenChange(false);
+                setActiveTab("login");
+                setSignupData({ email: "", password: "" });
+              }}
+              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+            >
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }

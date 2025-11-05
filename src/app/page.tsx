@@ -11,6 +11,7 @@ import AuthModal from "@/components/AuthModal";
 
 export default function Home() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<"signup" | "login">("signup");
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -19,17 +20,32 @@ export default function Home() {
     }
   };
 
+  const handleLoginClick = () => {
+    setAuthModalTab("login");
+    setAuthModalOpen(true);
+  };
+
+  const handleJoinClick = () => {
+    setAuthModalTab("signup");
+    setAuthModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Navigation scrollToSection={scrollToSection} onJoinClick={() => setAuthModalOpen(true)} />
-      <Hero onJoinClick={() => setAuthModalOpen(true)} />
-      <Features onJoinClick={() => setAuthModalOpen(true)} />
+      <Navigation 
+        scrollToSection={scrollToSection} 
+        onJoinClick={handleJoinClick}
+        onLoginClick={handleLoginClick}
+      />
+      <Hero onJoinClick={handleJoinClick} />
+      <Features onJoinClick={handleJoinClick} />
       <HowItWorks />
-      <CTA onJoinClick={() => setAuthModalOpen(true)} />
-      <Footer onJoinClick={() => setAuthModalOpen(true)} />
+      <CTA onJoinClick={handleJoinClick} />
+      <Footer onJoinClick={handleJoinClick} />
       <AuthModal 
         open={authModalOpen} 
         onOpenChange={setAuthModalOpen}
+        initialTab={authModalTab}
         onAuthSuccess={() => {
           // Redirect handled by callback route
         }}

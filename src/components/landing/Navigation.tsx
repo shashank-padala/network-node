@@ -7,9 +7,10 @@ import { ArrowRight, Network } from "lucide-react";
 interface NavigationProps {
   scrollToSection: (id: string) => void;
   onJoinClick?: () => void;
+  onLoginClick?: () => void;
 }
 
-export function Navigation({ scrollToSection, onJoinClick }: NavigationProps) {
+export function Navigation({ scrollToSection, onJoinClick, onLoginClick }: NavigationProps) {
   return (
     <nav className="border-b border-gray-200/50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
@@ -42,9 +43,14 @@ export function Navigation({ scrollToSection, onJoinClick }: NavigationProps) {
           </button>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <Link href="/signin" className="cursor-pointer hidden sm:block">
-            <Button variant="ghost" size="sm" className="cursor-pointer text-xs sm:text-sm">Sign in</Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="cursor-pointer text-xs sm:text-sm hidden sm:block"
+            onClick={onLoginClick}
+          >
+            Login
+          </Button>
           <Button 
             size="sm" 
             className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer text-xs sm:text-sm px-3 sm:px-4"

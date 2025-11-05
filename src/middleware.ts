@@ -12,19 +12,9 @@ export async function middleware(request: NextRequest) {
   // Protect dashboard routes
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
     if (!user) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/signin";
-      redirectUrl.searchParams.set("redirect", request.nextUrl.pathname);
-      return NextResponse.redirect(redirectUrl);
+      // Redirect to home page - user can click login/join buttons
+      return NextResponse.redirect(new URL("/", request.url));
     }
-  }
-
-  // Redirect to dashboard if already authenticated and trying to access signin
-  if (
-    user &&
-    request.nextUrl.pathname === "/signin"
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // Return response with updated cookies
