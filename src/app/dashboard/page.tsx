@@ -7,8 +7,8 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to members page
-    router.replace("/dashboard/members");
+    // Redirect to profile page for onboarding
+    router.replace("/dashboard/profile");
   }, [router]);
 
   return (

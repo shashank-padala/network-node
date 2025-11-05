@@ -1,10 +1,21 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Search, Calendar, Loader2, User } from "lucide-react";
+import { 
+  Search, 
+  Loader2, 
+  User, 
+  Calendar, 
+  MessageCircle,
+  Github,
+  Linkedin,
+  Twitter,
+  Mail,
+  Phone
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { MeetingRequestModal } from "@/components/MeetingRequestModal";
@@ -70,13 +81,17 @@ export default function MembersPage() {
     });
   }, [profiles, searchQuery]);
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  const handleDiscordClick = (username: string) => {
+    // Copy Discord username to clipboard
+    navigator.clipboard.writeText(username);
+    // Show a simple notification (you could enhance this with a toast)
+    alert(`Discord username "${username}" copied to clipboard!`);
+  };
+
+  const handleWhatsAppClick = (countryCode: string, number: string) => {
+    const cleanNumber = number.replace(/\D/g, "");
+    const whatsappUrl = `https://wa.me/${countryCode.replace(/\D/g, "")}${cleanNumber}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   if (loading) {
@@ -115,63 +130,146 @@ export default function MembersPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-4">
           {filteredProfiles.map((profile) => (
-            <Card key={profile.id} className="rounded-2xl">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  {profile.photo_url ? (
-                    <img
-                      src={profile.photo_url}
-                      alt={profile.name}
-                      className="w-16 h-16 rounded-full object-cover border border-gray-200"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shadow-sm">
-                      <User className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                  <div>
-                    <CardTitle className="text-lg">{profile.name}</CardTitle>
-                    <CardDescription>Builder</CardDescription>
-                  </div>
-                </div>
-                {profile.bio && (
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {profile.bio}
-                  </p>
-                )}
-                {profile.skills && profile.skills.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {profile.skills.slice(0, 3).map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 shadow-sm"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                    {profile.skills.length > 3 && (
-                      <span className="px-2 py-1 text-xs rounded-full bg-gray-500/10 text-gray-500 border border-gray-500/20 shadow-sm">
-                        +{profile.skills.length - 3}
-                      </span>
+            <Card key={profile.id} className="rounded-lg">
+              <CardHeader className="pb-4">
+                <div className="flex items-start gap-4">
+                  {/* Profile Photo */}
+                  <div className="flex-shrink-0">
+                    {profile.photo_url ? (
+                      <img
+                        src={profile.photo_url}
+                        alt={profile.name}
+                        className="w-16 h-16 rounded-full object-cover border border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shadow-sm">
+                        <User className="w-8 h-8 text-gray-400" />
+                      </div>
                     )}
                   </div>
-                )}
+
+                  {/* Profile Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          {profile.name}
+                        </h3>
+                        {profile.bio && (
+                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                            {profile.bio}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Skills */}
+                    {profile.skills && profile.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {profile.skills.map((skill, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-1 text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Social Links */}
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                      {profile.linkedin_url && (
+                        <a
+                          href={profile.linkedin_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="LinkedIn"
+                        >
+                          <Linkedin className="w-4 h-4" />
+                        </a>
+                      )}
+                      {profile.twitter_url && (
+                        <a
+                          href={profile.twitter_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-gray-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Twitter/X"
+                        >
+                          <Twitter className="w-4 h-4" />
+                        </a>
+                      )}
+                      {profile.github_url && (
+                        <a
+                          href={profile.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                          title="GitHub"
+                        >
+                          <Github className="w-4 h-4" />
+                        </a>
+                      )}
+                      {profile.email && (
+                        <a
+                          href={`mailto:${profile.email}`}
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Email"
+                        >
+                          <Mail className="w-4 h-4" />
+                        </a>
+                      )}
+                      {profile.discord_username && (
+                        <button
+                          onClick={() => handleDiscordClick(profile.discord_username!)}
+                          className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          title={`Discord: ${profile.discord_username}`}
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                        </button>
+                      )}
+                      {profile.whatsapp_country_code && profile.whatsapp_number && (
+                        <button
+                          onClick={() => handleWhatsAppClick(profile.whatsapp_country_code!, profile.whatsapp_number!)}
+                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          title="WhatsApp"
+                        >
+                          <Phone className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {user && user.id !== profile.id ? (
+                        <>
+                          {profile.calendly_url && (
+                            <MeetingRequestModal
+                              recipientId={profile.id}
+                              recipientName={profile.name}
+                              recipientCalendly={profile.calendly_url}
+                              trigger={
+                                <Button variant="outline" size="sm" className="gap-2">
+                                  <Calendar className="w-4 h-4" />
+                                  Book Call
+                                </Button>
+                              }
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <Button variant="outline" size="sm" disabled>
+                          Your Profile
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                {user && user.id !== profile.id ? (
-                  <MeetingRequestModal
-                    recipientId={profile.id}
-                    recipientName={profile.name}
-                    recipientCalendly={profile.calendly_url}
-                  />
-                ) : (
-                  <Button variant="outline" size="sm" className="w-full" disabled>
-                    Your Profile
-                  </Button>
-                )}
-              </CardContent>
             </Card>
           ))}
         </div>
@@ -179,4 +277,3 @@ export default function MembersPage() {
     </div>
   );
 }
-

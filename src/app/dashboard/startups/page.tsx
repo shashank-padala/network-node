@@ -89,7 +89,7 @@ export default function StartupsPage() {
         >
           <Link href="/dashboard/startups/new">
             <Plus className="h-4 w-4 mr-2" />
-            Post a Startup
+            Share your Idea
           </Link>
         </Button>
       </div>
@@ -100,7 +100,7 @@ export default function StartupsPage() {
           <Button asChild>
             <Link href="/dashboard/startups/new">
               <Plus className="h-4 w-4 mr-2" />
-              Post the First Startup
+              Share your Idea
             </Link>
           </Button>
         </div>

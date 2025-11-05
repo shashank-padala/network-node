@@ -12,10 +12,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Settings, Loader2, CheckCircle2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { 
+  User, 
+  Loader2, 
+  CheckCircle2, 
+  Mail, 
+  FileText, 
+  Code, 
+  MessageCircle,
+  Calendar,
+  Phone,
+  Linkedin,
+  Twitter,
+  Github,
+  Globe,
+  Save
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
+import { SkillsInput } from "@/components/ui/skills-input";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -26,8 +43,9 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     bio: "",
-    skills: "",
+    skills: [] as string[],
     linkedin: "",
     twitter: "",
     github: "",
@@ -57,8 +75,9 @@ export default function ProfilePage() {
         if (data) {
           setFormData({
             name: data.name || "",
+            email: data.email || "",
             bio: data.bio || "",
-            skills: data.skills?.join(", ") || "",
+            skills: data.skills || [],
             linkedin: data.linkedin_url || "",
             twitter: data.twitter_url || "",
             github: data.github_url || "",
@@ -88,16 +107,34 @@ export default function ProfilePage() {
     setSuccess(false);
 
     try {
-      const skillsArray = formData.skills
-        ? formData.skills.split(",").map((s) => s.trim()).filter(Boolean)
-        : [];
+      // Validate required fields
+      if (!formData.name.trim()) {
+        setError("Name is required");
+        setSaving(false);
+        return;
+      }
+      if (!formData.bio.trim()) {
+        setError("Bio is required");
+        setSaving(false);
+        return;
+      }
+      if (formData.skills.length === 0) {
+        setError("At least one skill is required");
+        setSaving(false);
+        return;
+      }
+      if (!formData.discord.trim()) {
+        setError("Discord username is required");
+        setSaving(false);
+        return;
+      }
 
       const { error: updateError } = await supabase
         .from("profiles")
         .update({
           name: formData.name,
           bio: formData.bio,
-          skills: skillsArray,
+          skills: formData.skills,
           linkedin_url: formData.linkedin || null,
           twitter_url: formData.twitter || null,
           github_url: formData.github || null,
@@ -116,6 +153,11 @@ export default function ProfilePage() {
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
+      
+      // Redirect to members page after successful profile completion
+      setTimeout(() => {
+        window.location.href = "/dashboard/members";
+      }, 1500);
     } catch (err) {
       setError("An unexpected error occurred");
     } finally {
@@ -140,54 +182,89 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Profile Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your profile and preferences
+      {/* Header */}
+      <div className="mb-8 text-center space-y-3">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-full mb-4">
+          <User className="h-8 w-8 text-white" />
+        </div>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+          Profile Settings
+        </h1>
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          Manage your profile and showcase your skills
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
-            <Settings className="h-6 w-6" />
-            Edit Profile
-          </CardTitle>
-          <CardDescription>
-            Update your information and showcase your skills
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Error/Success Messages */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
 
-            {success && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                Profile updated successfully!
-              </div>
-            )}
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4" />
+            Profile updated successfully!
+          </div>
+        )}
 
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium text-gray-700">
-                Name *
-              </label>
-              <Input
-                id="name"
-                name="name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                disabled={saving}
-              />
+        {/* Required Fields Section */}
+        <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <User className="h-5 w-5 text-blue-600" />
+              </div>
+              Required Information
+            </CardTitle>
+            <CardDescription className="text-base">
+              Complete these fields to activate your profile
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Name and Email Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Full Name *
+                </label>
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  disabled={saving}
+                  placeholder="Enter your full name"
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Email Address
+                </label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  disabled
+                  className="h-11 border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
+                />
+                <p className="text-xs text-gray-500">
+                  Email is synced from your account
+                </p>
+              </div>
             </div>
 
+            {/* Bio */}
             <div className="space-y-2">
-              <label htmlFor="bio" className="text-sm font-medium text-gray-700">
+              <label htmlFor="bio" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 Bio *
               </label>
               <Textarea
@@ -196,28 +273,66 @@ export default function ProfilePage() {
                 required
                 value={formData.bio}
                 onChange={handleChange}
-                className="min-h-[100px]"
+                className="min-h-[120px] border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="Tell us about yourself, what you're building, and what you're looking for..."
                 disabled={saving}
               />
             </div>
 
+            {/* Skills */}
             <div className="space-y-2">
-              <label htmlFor="skills" className="text-sm font-medium text-gray-700">
-                Skills (comma-separated)
+              <label htmlFor="skills" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Code className="h-4 w-4" />
+                Skills *
+              </label>
+              <SkillsInput
+                skills={formData.skills}
+                onChange={(skills) => setFormData({ ...formData, skills })}
+                disabled={saving}
+                placeholder="Type a skill and press Enter"
+                required
+              />
+            </div>
+
+            {/* Discord */}
+            <div className="space-y-2">
+              <label htmlFor="discord" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Discord Username *
               </label>
               <Input
-                id="skills"
-                name="skills"
-                value={formData.skills}
+                id="discord"
+                name="discord"
+                type="text"
+                value={formData.discord}
                 onChange={handleChange}
-                placeholder="React, TypeScript, Design"
+                placeholder="username#1234"
                 disabled={saving}
+                required
+                className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Professional Links Section */}
+        <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Globe className="h-5 w-5 text-green-600" />
+              </div>
+              Professional Links
+            </CardTitle>
+            <CardDescription className="text-base">
+              Connect your professional profiles
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
+                <label htmlFor="linkedin" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Linkedin className="h-4 w-4" />
                   LinkedIn
                 </label>
                 <Input
@@ -228,11 +343,13 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   placeholder="https://linkedin.com/in/..."
                   disabled={saving}
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="twitter" className="text-sm font-medium text-gray-700">
+                <label htmlFor="twitter" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Twitter className="h-4 w-4" />
                   Twitter/X
                 </label>
                 <Input
@@ -243,27 +360,47 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   placeholder="https://twitter.com/..."
                   disabled={saving}
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label htmlFor="github" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Github className="h-4 w-4" />
+                  GitHub
+                </label>
+                <Input
+                  id="github"
+                  name="github"
+                  type="url"
+                  value={formData.github}
+                  onChange={handleChange}
+                  placeholder="https://github.com/..."
+                  disabled={saving}
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
+          </CardContent>
+        </Card>
 
+        {/* Contact Information Section */}
+        <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Phone className="h-5 w-5 text-purple-600" />
+              </div>
+              Contact Information
+            </CardTitle>
+            <CardDescription className="text-base">
+              How others can reach you
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="github" className="text-sm font-medium text-gray-700">
-                GitHub
-              </label>
-              <Input
-                id="github"
-                name="github"
-                type="url"
-                value={formData.github}
-                onChange={handleChange}
-                placeholder="https://github.com/..."
-                disabled={saving}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="calendly" className="text-sm font-medium text-gray-700">
+              <label htmlFor="calendly" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
                 Calendly Link
               </label>
               <Input
@@ -274,14 +411,16 @@ export default function ProfilePage() {
                 onChange={handleChange}
                 placeholder="https://calendly.com/..."
                 disabled={saving}
+                className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="whatsappCountryCode" className="text-sm font-medium text-gray-700">
-                  WhatsApp Country Code
-                </label>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                WhatsApp Number
+              </label>
+              <div className="flex gap-3 items-center">
                 <Select
                   value={formData.whatsappCountryCode}
                   onValueChange={(value) =>
@@ -289,8 +428,8 @@ export default function ProfilePage() {
                   }
                   disabled={saving}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select code" />
+                  <SelectTrigger className="w-[140px] h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20">
+                    <SelectValue placeholder="Code" />
                   </SelectTrigger>
                   <SelectContent>
                     {COUNTRY_CODES.map((code) => (
@@ -300,55 +439,45 @@ export default function ProfilePage() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label htmlFor="whatsappNumber" className="text-sm font-medium text-gray-700">
-                  WhatsApp Number
-                </label>
                 <Input
                   id="whatsappNumber"
                   name="whatsappNumber"
                   type="tel"
                   value={formData.whatsappNumber}
                   onChange={handleChange}
-                  placeholder="1234567890"
+                  placeholder="Phone number"
                   disabled={saving}
+                  className="flex-1 h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="space-y-2">
-              <label htmlFor="discord" className="text-sm font-medium text-gray-700">
-                Discord Username
-              </label>
-              <Input
-                id="discord"
-                name="discord"
-                type="text"
-                value={formData.discord}
-                onChange={handleChange}
-                placeholder="username#1234"
-                disabled={saving}
-              />
-            </div>
+        <Separator className="my-8" />
 
-            <Button
-              type="submit"
-              disabled={saving}
-              className="cursor-pointer"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        {/* Submit Button */}
+        <div className="flex justify-center pb-6">
+          <Button
+            type="submit"
+            disabled={saving}
+            size="lg"
+            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-5 w-5 mr-2" />
+                Save Profile
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

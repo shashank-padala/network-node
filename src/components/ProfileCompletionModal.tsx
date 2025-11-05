@@ -16,6 +16,7 @@ import { Loader2, Network } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
+import { SkillsInput } from "@/components/ui/skills-input";
 
 interface ProfileCompletionModalProps {
   open: boolean;
@@ -31,7 +32,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
   const [formData, setFormData] = useState({
     name: "",
     bio: "",
-    skills: "",
+    skills: [] as string[],
     linkedin: "",
     twitter: "",
     github: "",
@@ -57,13 +58,30 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
     setError(null);
 
     try {
+      // Validate required fields
+      if (!formData.name.trim()) {
+        setError("Name is required");
+        setLoading(false);
+        return;
+      }
+      if (!formData.bio.trim()) {
+        setError("Bio is required");
+        setLoading(false);
+        return;
+      }
+      if (formData.skills.length === 0) {
+        setError("At least one skill is required");
+        setLoading(false);
+        return;
+      }
+      if (!formData.discord.trim()) {
+        setError("Discord username is required");
+        setLoading(false);
+        return;
+      }
+
       // Get user's photo from Google if available
       const photoUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
-
-      // Parse skills array
-      const skillsArray = formData.skills
-        ? formData.skills.split(",").map((s) => s.trim()).filter(Boolean)
-        : [];
 
       // Create profile in profiles table
       const { error: profileError } = await supabase
@@ -74,7 +92,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
           email: user.email || "",
           photo_url: photoUrl,
           bio: formData.bio,
-          skills: skillsArray,
+          skills: formData.skills,
           linkedin_url: formData.linkedin || null,
           twitter_url: formData.twitter || null,
           github_url: formData.github || null,
@@ -158,15 +176,14 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
 
           <div className="space-y-2">
             <label htmlFor="skills" className="text-sm font-medium">
-              Skills (comma-separated)
+              Skills *
             </label>
-            <Input
-              id="skills"
-              name="skills"
-              value={formData.skills}
-              onChange={handleChange}
-              placeholder="React, TypeScript, Design, Marketing..."
+            <SkillsInput
+              skills={formData.skills}
+              onChange={(skills) => setFormData({ ...formData, skills })}
               disabled={loading}
+              placeholder="Type a skill and press Enter"
+              required
             />
           </div>
 
@@ -274,7 +291,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
 
           <div className="space-y-2">
             <label htmlFor="discord" className="text-sm font-medium">
-              Discord Username
+              Discord Username *
             </label>
             <Input
               id="discord"
@@ -284,6 +301,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
               onChange={handleChange}
               placeholder="username#1234"
               disabled={loading}
+              required
             />
           </div>
 
