@@ -185,27 +185,6 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                 </TabsList>
 
                 <TabsContent value="signup" className="space-y-4 mt-4">
-                  <Button
-                    type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                  >
-                    <FcGoogle size={20} /> Continue with Google
-                    <span className="absolute -bottom-2 -right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      Recommended
-                    </span>
-                  </Button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
-
                   <form onSubmit={handleSignup} className="space-y-4">
                     {error && (
                       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -289,9 +268,16 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                       )}
                     </Button>
                   </form>
-                </TabsContent>
 
-                <TabsContent value="login" className="space-y-4 mt-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                  </div>
+
                   <Button
                     type="button"
                     className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
@@ -303,16 +289,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                       Recommended
                     </span>
                   </Button>
+                </TabsContent>
 
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
-
+                <TabsContent value="login" className="space-y-4 mt-4">
                   <form onSubmit={handleLogin} className="space-y-4">
                     {error && (
                       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -380,6 +359,27 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                       )}
                     </Button>
                   </form>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    <FcGoogle size={20} /> Continue with Google
+                    <span className="absolute -bottom-2 -right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      Recommended
+                    </span>
+                  </Button>
                 </TabsContent>
               </Tabs>
 
@@ -388,7 +388,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                   Join the Network & Start Building 🚀 
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Connect with builders, find co-founders, and land your next job
+                  Connect with builders, find co-founders, or land your next job
                 </p>
               </div>
             </>
