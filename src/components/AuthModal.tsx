@@ -22,7 +22,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
   const [activeTab, setActiveTab] = useState(initialTab);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [signupData, setSignupData] = useState({ email: "", password: "" });
+  const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -34,7 +34,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
   useEffect(() => {
     if (!open) {
       setError(null);
-      setSignupData({ email: "", password: "" });
+      setSignupData({ name: "", email: "", password: "" });
       setLoginData({ email: "", password: "" });
       return;
     }
@@ -73,6 +73,12 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
+        options: {
+          data: {
+            name: signupData.name,
+            full_name: signupData.name,
+          },
+        },
       });
 
       if (signUpError) {
@@ -181,11 +187,14 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                 <TabsContent value="signup" className="space-y-4 mt-4">
                   <Button
                     type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
                     <FcGoogle size={20} /> Continue with Google
+                    <span className="absolute -bottom-2 -right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      Recommended
+                    </span>
                   </Button>
 
                   <div className="relative">
@@ -203,6 +212,21 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                         {error}
                       </div>
                     )}
+
+                    <div className="space-y-2">
+                      <label htmlFor="signup-name" className="text-sm font-medium">
+                        Full Name
+                      </label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        required
+                        value={signupData.name}
+                        onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                        placeholder="John Doe"
+                        disabled={loading}
+                      />
+                    </div>
 
                     <div className="space-y-2">
                       <label htmlFor="signup-email" className="text-sm font-medium">
@@ -270,11 +294,14 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                 <TabsContent value="login" className="space-y-4 mt-4">
                   <Button
                     type="button"
-                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white"
+                    className="w-full flex items-center justify-center gap-3 py-3 text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
                     <FcGoogle size={20} /> Continue with Google
+                    <span className="absolute -bottom-2 -right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      Recommended
+                    </span>
                   </Button>
 
                   <div className="relative">
@@ -407,7 +434,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
                 setShowEmailConfirmation(false);
                 onOpenChange(false);
                 setActiveTab("login");
-                setSignupData({ email: "", password: "" });
+                setSignupData({ name: "", email: "", password: "" });
               }}
               className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
             >
