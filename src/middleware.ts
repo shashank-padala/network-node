@@ -8,23 +8,47 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const { supabase, response } = createClient(request);
+  let user = null;
+  let response: NextResponse | null = null;
+  
+  try {
+    const { supabase, response: supabaseResponse } = createClient(request);
+    response = supabaseResponse;
 
-  // Refresh session if expired - this will update the response cookies
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    // Refresh session if expired - this will update the response cookies
+    // Wrap in try-catch to handle network errors gracefully
+    const {
+      data: { user: fetchedUser },
+      error,
+    } = await supabase.auth.getUser();
 
-  // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
-    if (!user) {
-      // Redirect to home page - user can click login/join buttons
+    // Only use user if fetch was successful
+    if (!error && fetchedUser) {
+      user = fetchedUser;
+    }
+
+    // Protect dashboard routes only if we successfully fetched user data
+    if (request.nextUrl.pathname.startsWith("/dashboard")) {
+      if (!user) {
+        // Redirect to home page - user can click login/join buttons
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    }
+
+    // Return response with updated cookies
+    return response || NextResponse.next();
+  } catch (error) {
+    // If there's a network error or fetch fails, handle gracefully
+    console.warn("Middleware auth check failed:", error);
+    
+    // For dashboard routes, redirect to home if we can't verify auth
+    if (request.nextUrl.pathname.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+    
+    // For other routes, allow them to proceed
+    return response || NextResponse.next();
   }
-
-  // Return response with updated cookies
-  return response;
 }
 
 export const config = {

@@ -236,7 +236,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
 
           <div className="space-y-2">
             <label htmlFor="calendly" className="text-sm font-medium">
-              Calendly Link
+              Meeting Link
             </label>
             <Input
               id="calendly"
@@ -244,9 +244,12 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
               type="url"
               value={formData.calendly}
               onChange={handleChange}
-              placeholder="https://calendly.com/..."
+              placeholder="https://calendly.com/... or https://cal.com/..."
               disabled={loading}
             />
+            <p className="text-xs text-gray-500">
+              Share your Calendly, Cal.com, or any other meeting scheduling link
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

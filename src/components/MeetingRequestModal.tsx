@@ -144,14 +144,14 @@ export function MeetingRequestModal({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="virtual">
-                  Virtual {recipientCalendly && "(via Calendly)"}
+                  Virtual {recipientCalendly && "(via meeting link)"}
                 </SelectItem>
                 <SelectItem value="in-person">In-person</SelectItem>
               </SelectContent>
             </Select>
             {meetingType === "virtual" && recipientCalendly && (
               <p className="text-xs text-muted-foreground">
-                They have a Calendly link:{" "}
+                They have a meeting link:{" "}
                 <a
                   href={recipientCalendly}
                   target="_blank"
@@ -219,6 +219,7 @@ export function MeetingRequestModal({
     </Dialog>
   );
 }
+
 
 
 

@@ -401,7 +401,7 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label htmlFor="calendly" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                Calendly Link
+                Meeting Link
               </label>
               <Input
                 id="calendly"
@@ -409,10 +409,13 @@ export default function ProfilePage() {
                 type="url"
                 value={formData.calendly}
                 onChange={handleChange}
-                placeholder="https://calendly.com/..."
+                placeholder="https://calendly.com/... or https://cal.com/..."
                 disabled={saving}
                 className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
               />
+              <p className="text-xs text-gray-500">
+                Share your Calendly, Cal.com, or any other meeting scheduling link
+              </p>
             </div>
 
             <div className="space-y-2">
