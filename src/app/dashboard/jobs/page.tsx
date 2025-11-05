@@ -7,7 +7,6 @@ import { Briefcase, Calendar, Plus, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { MeetingRequestModal } from "@/components/MeetingRequestModal";
 
 interface Job {
   id: string;
@@ -156,13 +155,16 @@ export default function JobsPage() {
                     </span>{" "}
                     • {formatTimeAgo(job.created_at)}
                   </p>
-                  {user && user.id !== job.user_id && (
-                    <MeetingRequestModal
-                      recipientId={job.user_id}
-                      recipientName={job.profiles?.name || "Unknown"}
-                      recipientCalendly={job.profiles?.calendly_url || null}
-                      jobId={job.id}
-                    />
+                  {user && user.id !== job.user_id && job.profiles?.calendly_url && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-2"
+                      onClick={() => window.open(job.profiles!.calendly_url!, "_blank")}
+                    >
+                      <Calendar className="w-4 h-4" />
+                      Book Call
+                    </Button>
                   )}
                 </div>
               </CardContent>

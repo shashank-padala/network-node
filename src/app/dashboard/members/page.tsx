@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { MeetingRequestModal } from "@/components/MeetingRequestModal";
 
 interface Profile {
   id: string;
@@ -248,17 +247,15 @@ export default function MembersPage() {
                       {user && user.id !== profile.id ? (
                         <>
                           {profile.calendly_url && (
-                            <MeetingRequestModal
-                              recipientId={profile.id}
-                              recipientName={profile.name}
-                              recipientCalendly={profile.calendly_url}
-                              trigger={
-                                <Button variant="outline" size="sm" className="gap-2">
-                                  <Calendar className="w-4 h-4" />
-                                  Book Call
-                                </Button>
-                              }
-                            />
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="gap-2"
+                              onClick={() => window.open(profile.calendly_url!, "_blank")}
+                            >
+                              <Calendar className="w-4 h-4" />
+                              Book Call
+                            </Button>
                           )}
                         </>
                       ) : (
