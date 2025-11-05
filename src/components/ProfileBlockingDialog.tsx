@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Settings } from "lucide-react";
 
 interface ProfileBlockingDialogProps {
   open: boolean;
@@ -34,25 +33,19 @@ export function ProfileBlockingDialog({ open, onClose }: ProfileBlockingDialogPr
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md w-[95vw]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Complete Your Profile</DialogTitle>
-          <DialogDescription className="text-base pt-2">
-            You need to complete your profile to access other features on the platform.
-          </DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl font-bold text-center">Complete Your Profile</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-900">
-              Please add your name and bio to continue exploring NetworkNode.
-            </p>
-          </div>
+          <p className="text-sm sm:text-base text-gray-700 text-center">
+            Please add your name and bio.
+          </p>
           <Button
             onClick={handleCompleteProfile}
-            className="w-full cursor-pointer"
+            className="w-full cursor-pointer h-10 sm:h-11"
           >
-            <Settings className="mr-2 h-4 w-4" />
-            Complete Profile
+            Go to Profile
           </Button>
         </div>
       </DialogContent>

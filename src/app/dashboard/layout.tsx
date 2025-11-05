@@ -8,7 +8,7 @@ import {
   Users,
   Briefcase,
   Rocket,
-  Settings,
+  User,
   LogOut,
   Network,
   Menu,
@@ -24,7 +24,7 @@ const navigation = [
   { name: "Members", href: "/dashboard/members", icon: Users },
   { name: "Jobs", href: "/dashboard/jobs", icon: Briefcase },
   { name: "Startups", href: "/dashboard/startups", icon: Rocket },
-  { name: "Profile", href: "/dashboard/profile", icon: Settings },
+  { name: "Profile", href: "/dashboard/profile", icon: User },
 ];
 
 export default function DashboardLayout({
