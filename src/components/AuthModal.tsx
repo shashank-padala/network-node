@@ -172,7 +172,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
             </div>
           ) : (
             <>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "signup" | "login")} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>
                   <TabsTrigger value="login">Log In</TabsTrigger>

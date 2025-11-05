@@ -48,11 +48,11 @@ export function Hero({ onJoinClick }: HeroProps) {
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900">
               {/* Mobile: One sentence */}
               <div className="block sm:hidden">
-                Find <span className="text-blue-600">People</span>. Build <span className="text-blue-600">Startups</span>. Land <span className="text-blue-600">Jobs</span>.
+                Find <span className="text-blue-600">Talent</span>. Build <span className="text-blue-600">Startups</span>. Land <span className="text-blue-600">Jobs</span>.
               </div>
               {/* Desktop: Separate lines */}
               <div className="hidden sm:block space-y-1 sm:space-y-2">
-                <div>Find <span className="text-blue-600">People</span></div>
+                <div>Find <span className="text-blue-600">Talent</span></div>
                 <div>Build <span className="text-blue-600">Startups</span></div>
                 <div>Land <span className="text-blue-600">Jobs</span></div>
               </div>
