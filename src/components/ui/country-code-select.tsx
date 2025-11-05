@@ -47,17 +47,12 @@ export function CountryCodeSelect({
         }
       }}
       disabled={disabled}
-      modal={false}
     >
       <SelectPrimitive.Trigger
         className={cn(
           "flex h-11 w-[140px] items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm focus:shadow-md touch-manipulation",
           className
         )}
-        onClick={(e) => {
-          // Prevent double-tap zoom on mobile
-          e.preventDefault();
-        }}
       >
         <SelectPrimitive.Value>{selectedLabel}</SelectPrimitive.Value>
         <SelectPrimitive.Icon asChild>
@@ -71,15 +66,6 @@ export function CountryCodeSelect({
           side="bottom"
           align="start"
           sideOffset={4}
-          onInteractOutside={(e) => {
-            // Prevent closing when interacting with elements inside the dropdown
-            const target = e.target as HTMLElement;
-            if (target.closest('[data-radix-select-viewport]') || 
-                target.closest('input') || 
-                target.closest('[role="option"]')) {
-              e.preventDefault();
-            }
-          }}
         >
           {/* Search Input */}
           <div className="p-2 border-b border-gray-200">
