@@ -15,7 +15,7 @@ export function SkillsInput({
   skills, 
   onChange, 
   disabled = false,
-  placeholder = "Type a skill and press Enter",
+  placeholder = "Add at least one skill to continue",
   required = false
 }: SkillsInputProps) {
   const [inputValue, setInputValue] = useState("");
@@ -73,7 +73,7 @@ export function SkillsInput({
         />
       </div>
       {skills.length === 0 && (
-        <p className="text-xs text-gray-500">Press Enter to add a skill</p>
+        <p className="text-xs text-gray-500">Type a skill and Press Enter</p>
       )}
     </div>
   );

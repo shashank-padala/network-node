@@ -5,13 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { 
   User, 
@@ -27,20 +20,24 @@ import {
   Twitter,
   Github,
   Globe,
-  Save
+  Save,
+  Handshake,
+  Briefcase,
+  Users
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
 import { SkillsInput } from "@/components/ui/skills-input";
+import { CountryCodeSelect } from "@/components/ui/country-code-select";
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -53,11 +50,16 @@ export default function ProfilePage() {
     whatsappCountryCode: "",
     whatsappNumber: "",
     discord: "",
+    openToCollaborate: true,
+    openToJobs: false,
+    hiringTalent: false,
   });
 
   useEffect(() => {
     async function fetchProfile() {
-      if (!user) return;
+      if (!user || hasLoadedInitialData) return;
+
+      const supabase = createClient();
 
       try {
         const { data, error: fetchError } = await supabase
@@ -85,7 +87,11 @@ export default function ProfilePage() {
             whatsappCountryCode: data.whatsapp_country_code || "+91",
             whatsappNumber: data.whatsapp_number || "",
             discord: data.discord_username || "",
+            openToCollaborate: data.open_to_collaborate !== undefined ? data.open_to_collaborate : true,
+            openToJobs: data.open_to_jobs !== undefined ? data.open_to_jobs : false,
+            hiringTalent: data.hiring_talent !== undefined ? data.hiring_talent : false,
           });
+          setHasLoadedInitialData(true);
         }
       } catch (err) {
         console.error("Unexpected error:", err);
@@ -96,7 +102,7 @@ export default function ProfilePage() {
     }
 
     fetchProfile();
-  }, [user, supabase]);
+  }, [user, hasLoadedInitialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,15 +112,12 @@ export default function ProfilePage() {
     setError(null);
     setSuccess(false);
 
+    const supabase = createClient();
+
     try {
       // Validate required fields
       if (!formData.name.trim()) {
         setError("Name is required");
-        setSaving(false);
-        return;
-      }
-      if (!formData.bio.trim()) {
-        setError("Bio is required");
         setSaving(false);
         return;
       }
@@ -133,7 +136,7 @@ export default function ProfilePage() {
         .from("profiles")
         .update({
           name: formData.name,
-          bio: formData.bio,
+          bio: formData.bio || null,
           skills: formData.skills,
           linkedin_url: formData.linkedin || null,
           twitter_url: formData.twitter || null,
@@ -142,6 +145,9 @@ export default function ProfilePage() {
           whatsapp_country_code: formData.whatsappCountryCode || null,
           whatsapp_number: formData.whatsappNumber || null,
           discord_username: formData.discord || null,
+          open_to_collaborate: formData.openToCollaborate,
+          open_to_jobs: formData.openToJobs,
+          hiring_talent: formData.hiringTalent,
         })
         .eq("id", user.id);
 
@@ -210,14 +216,14 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Required Fields Section */}
+        {/* Basic Information Section */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-3 text-xl">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <User className="h-5 w-5 text-blue-600" />
               </div>
-              Required Information
+              Basic Information
             </CardTitle>
             <CardDescription className="text-base">
               Complete these fields to activate your profile
@@ -255,28 +261,54 @@ export default function ProfilePage() {
                   disabled
                   className="h-11 border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-500">
-                  Email is synced from your account
-                </p>
               </div>
             </div>
 
-            {/* Bio */}
-            <div className="space-y-2">
-              <label htmlFor="bio" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Bio *
-              </label>
-              <Textarea
-                id="bio"
-                name="bio"
-                required
-                value={formData.bio}
-                onChange={handleChange}
-                className="min-h-[120px] border-gray-200 focus:ring-2 focus:ring-blue-500/20"
-                placeholder="Tell us about yourself, what you're building, and what you're looking for..."
-                disabled={saving}
-              />
+            {/* WhatsApp and Discord Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  WhatsApp Number *
+                </label>
+                <div className="flex gap-3 items-center">
+                  <CountryCodeSelect
+                    value={formData.whatsappCountryCode}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, whatsappCountryCode: value })
+                    }
+                    disabled={saving}
+                  />
+                  <Input
+                    id="whatsappNumber"
+                    name="whatsappNumber"
+                    type="tel"
+                    value={formData.whatsappNumber}
+                    onChange={handleChange}
+                    placeholder="Phone number"
+                    disabled={saving}
+                    required
+                    className="flex-1 h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="discord" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Discord Username *
+                </label>
+                <Input
+                  id="discord"
+                  name="discord"
+                  type="text"
+                  value={formData.discord}
+                  onChange={handleChange}
+                  placeholder="username#1234"
+                  disabled={saving}
+                  required
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
             </div>
 
             {/* Skills */}
@@ -289,28 +321,145 @@ export default function ProfilePage() {
                 skills={formData.skills}
                 onChange={(skills) => setFormData({ ...formData, skills })}
                 disabled={saving}
-                placeholder="Type a skill and press Enter"
+                placeholder="Add at least one skill to continue"
                 required
               />
             </div>
 
-            {/* Discord */}
+            {/* Bio */}
             <div className="space-y-2">
-              <label htmlFor="discord" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Discord Username *
+              <label htmlFor="bio" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Bio
               </label>
-              <Input
-                id="discord"
-                name="discord"
-                type="text"
-                value={formData.discord}
+              <Textarea
+                id="bio"
+                name="bio"
+                value={formData.bio}
                 onChange={handleChange}
-                placeholder="username#1234"
+                className="min-h-[120px] border-gray-200 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="Share a brief introduction about yourself.
+For example: 'I'm a full-stack developer passionate about building scalable web applications. Currently working on a SaaS platform and always open to collaborating on innovative projects.'"
                 disabled={saving}
-                required
-                className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
               />
+              <p className="text-xs text-gray-500">
+                Optional: Share what you're building, your interests, or what you're looking for
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Availability & Interests Section */}
+        <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <Handshake className="h-5 w-5 text-orange-600" />
+              </div>
+              Availability & Interests *
+            </CardTitle>
+            <CardDescription className="text-base">
+              Let others know what you're open to
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Open to Collaborate */}
+            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Handshake className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 cursor-pointer">
+                    Open to collaborate on new projects or startup ideas
+                  </label>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Interested in partnering on innovative projects
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, openToCollaborate: !formData.openToCollaborate })}
+                disabled={saving}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.openToCollaborate ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={formData.openToCollaborate}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    formData.openToCollaborate ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Open to Jobs */}
+            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Briefcase className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 cursor-pointer">
+                    Open to new job opportunities
+                  </label>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Actively looking for new employment opportunities
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, openToJobs: !formData.openToJobs })}
+                disabled={saving}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.openToJobs ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={formData.openToJobs}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    formData.openToJobs ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Hiring Talent */}
+            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Users className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 cursor-pointer">
+                    Hiring talent
+                  </label>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Looking to recruit skilled professionals
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, hiringTalent: !formData.hiringTalent })}
+                disabled={saving}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.hiringTalent ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={formData.hiringTalent}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    formData.hiringTalent ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
             </div>
           </CardContent>
         </Card>
@@ -358,7 +507,7 @@ export default function ProfilePage() {
                   type="url"
                   value={formData.twitter}
                   onChange={handleChange}
-                  placeholder="https://twitter.com/..."
+                  placeholder="https://x.com/..."
                   disabled={saving}
                   className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
                 />
@@ -418,42 +567,6 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                WhatsApp Number
-              </label>
-              <div className="flex gap-3 items-center">
-                <Select
-                  value={formData.whatsappCountryCode}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, whatsappCountryCode: value })
-                  }
-                  disabled={saving}
-                >
-                  <SelectTrigger className="w-[140px] h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20">
-                    <SelectValue placeholder="Code" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRY_CODES.map((code) => (
-                      <SelectItem key={code.value} value={code.value}>
-                        {code.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  id="whatsappNumber"
-                  name="whatsappNumber"
-                  type="tel"
-                  value={formData.whatsappNumber}
-                  onChange={handleChange}
-                  placeholder="Phone number"
-                  disabled={saving}
-                  className="flex-1 h-11 border-gray-200 focus:ring-2 focus:ring-blue-500/20"
-                />
-              </div>
-            </div>
           </CardContent>
         </Card>
 

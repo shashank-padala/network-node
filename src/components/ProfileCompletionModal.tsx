@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Network } from "lucide-react";
+import { Loader2, Network, Handshake, Briefcase, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
@@ -40,6 +40,9 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
     whatsappCountryCode: "+91",
     whatsappNumber: "",
     discord: "",
+    openToCollaborate: true,
+    openToJobs: false,
+    hiringTalent: false,
   });
 
   useEffect(() => {
@@ -61,11 +64,6 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
       // Validate required fields
       if (!formData.name.trim()) {
         setError("Name is required");
-        setLoading(false);
-        return;
-      }
-      if (!formData.bio.trim()) {
-        setError("Bio is required");
         setLoading(false);
         return;
       }
@@ -91,7 +89,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
           name: formData.name,
           email: user.email || "",
           photo_url: photoUrl,
-          bio: formData.bio,
+          bio: formData.bio || null,
           skills: formData.skills,
           linkedin_url: formData.linkedin || null,
           twitter_url: formData.twitter || null,
@@ -100,6 +98,9 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
           whatsapp_country_code: formData.whatsappCountryCode || null,
           whatsapp_number: formData.whatsappNumber || null,
           discord_username: formData.discord || null,
+          open_to_collaborate: formData.openToCollaborate,
+          open_to_jobs: formData.openToJobs,
+          hiring_talent: formData.hiringTalent,
         });
 
       if (profileError) {
@@ -160,18 +161,21 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
 
           <div className="space-y-2">
             <label htmlFor="bio" className="text-sm font-medium">
-              Bio *
+              Bio
             </label>
             <Textarea
               id="bio"
               name="bio"
-              required
               value={formData.bio}
               onChange={handleChange}
               className="min-h-[100px]"
-              placeholder="Tell us about yourself, what you're building, and what you're looking for..."
+              placeholder="Share a brief introduction about yourself.
+For example: 'I'm a full-stack developer passionate about building scalable web applications. Currently working on a SaaS platform and always open to collaborating on innovative projects.'"
               disabled={loading}
             />
+            <p className="text-xs text-gray-500">
+              Optional: Share what you're building, your interests, or what you're looking for
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -182,7 +186,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
               skills={formData.skills}
               onChange={(skills) => setFormData({ ...formData, skills })}
               disabled={loading}
-              placeholder="Type a skill and press Enter"
+              placeholder="Add at least one skill to continue"
               required
             />
           </div>
@@ -213,7 +217,7 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
                 type="url"
                 value={formData.twitter}
                 onChange={handleChange}
-                placeholder="https://twitter.com/..."
+                placeholder="https://x.com/..."
                 disabled={loading}
               />
             </div>
@@ -306,6 +310,97 @@ export default function ProfileCompletionModal({ open, onClose }: ProfileComplet
               disabled={loading}
               required
             />
+          </div>
+
+          {/* Availability & Interests Section */}
+          <div className="space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <div className="flex items-center gap-2 mb-2">
+              <Handshake className="h-5 w-5 text-orange-600" />
+              <label className="text-sm font-semibold text-gray-700">
+                Availability & Interests *
+              </label>
+            </div>
+            <p className="text-xs text-gray-500 mb-4">
+              Let others know what you're open to
+            </p>
+
+            {/* Open to Collaborate */}
+            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white">
+              <div className="flex items-center gap-3">
+                <Handshake className="h-4 w-4 text-blue-600" />
+                <label className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Open to collaborate on new projects or startup ideas
+                </label>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, openToCollaborate: !formData.openToCollaborate })}
+                disabled={loading}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.openToCollaborate ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={formData.openToCollaborate}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    formData.openToCollaborate ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Open to Jobs */}
+            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white">
+              <div className="flex items-center gap-3">
+                <Briefcase className="h-4 w-4 text-green-600" />
+                <label className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Open to new job opportunities
+                </label>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, openToJobs: !formData.openToJobs })}
+                disabled={loading}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.openToJobs ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={formData.openToJobs}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    formData.openToJobs ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Hiring Talent */}
+            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white">
+              <div className="flex items-center gap-3">
+                <Users className="h-4 w-4 text-purple-600" />
+                <label className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Hiring talent
+                </label>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, hiringTalent: !formData.hiringTalent })}
+                disabled={loading}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.hiringTalent ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={formData.hiringTalent}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    formData.hiringTalent ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
           </div>
 
           <Button
