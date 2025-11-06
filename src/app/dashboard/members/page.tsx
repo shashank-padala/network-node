@@ -8,13 +8,9 @@ import {
   Search, 
   Loader2, 
   User, 
-  Calendar, 
-  Github,
-  Linkedin,
-  Twitter,
-  Mail
+  Calendar
 } from "lucide-react";
-import { FaWhatsapp, FaDiscord } from "react-icons/fa";
+import { FaWhatsapp, FaDiscord, FaLinkedin, FaTwitter, FaGithub, FaEnvelope } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { checkProfileCompletion } from "@/lib/profile-utils";
@@ -198,48 +194,6 @@ export default function MembersPage() {
 
                     {/* Social Links */}
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                      {profile.linkedin_url && (
-                        <a
-                          href={profile.linkedin_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="LinkedIn"
-                        >
-                          <Linkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
-                      {profile.twitter_url && (
-                        <a
-                          href={profile.twitter_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Twitter/X"
-                        >
-                          <Twitter className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
-                      {profile.github_url && (
-                        <a
-                          href={profile.github_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-                          title="GitHub"
-                        >
-                          <Github className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
-                      {profile.email && (
-                        <a
-                          href={`mailto:${profile.email}`}
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Email"
-                        >
-                          <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
                       {profile.discord_username && (
                         <button
                           onClick={() => handleDiscordClick(profile.discord_username!)}
@@ -257,6 +211,48 @@ export default function MembersPage() {
                         >
                           <FaWhatsapp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
                         </button>
+                      )}
+                      {profile.linkedin_url && (
+                        <a
+                          href={profile.linkedin_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="LinkedIn"
+                        >
+                          <FaLinkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                        </a>
+                      )}
+                      {profile.twitter_url && (
+                        <a
+                          href={profile.twitter_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Twitter/X"
+                        >
+                          <FaTwitter className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
+                        </a>
+                      )}
+                      {profile.github_url && (
+                        <a
+                          href={profile.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                          title="GitHub"
+                        >
+                          <FaGithub className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-900" />
+                        </a>
+                      )}
+                      {profile.email && (
+                        <a
+                          href={`mailto:${profile.email}`}
+                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Email"
+                        >
+                          <FaEnvelope className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                        </a>
                       )}
                     </div>
 
