@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Network, Loader2, Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
+import { checkProfileCompletion } from "@/lib/profile-utils";
 
 type Props = {
   open: boolean;
@@ -102,9 +103,14 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
         return;
       }
 
-      // Success - redirect to profile page for onboarding
+      // Success - check profile completion and redirect accordingly
       onOpenChange(false);
-      router.push("/dashboard/profile");
+      const completionStatus = await checkProfileCompletion(authData.user.id);
+      if (completionStatus.isComplete) {
+        router.push("/dashboard/members");
+      } else {
+        router.push("/dashboard/profile");
+      }
       router.refresh();
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -130,9 +136,14 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
       }
 
       if (data.user) {
-        // Success - redirect to profile page for onboarding
+        // Success - check profile completion and redirect accordingly
         onOpenChange(false);
-        router.push("/dashboard/profile");
+        const completionStatus = await checkProfileCompletion(data.user.id);
+        if (completionStatus.isComplete) {
+          router.push("/dashboard/members");
+        } else {
+          router.push("/dashboard/profile");
+        }
         router.refresh();
       }
     } catch (err) {

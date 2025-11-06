@@ -17,6 +17,8 @@ import {
 import { FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { checkProfileCompletion } from "@/lib/profile-utils";
+import { useRouter } from "next/navigation";
 
 interface Profile {
   id: string;
@@ -36,10 +38,27 @@ interface Profile {
 
 export default function MembersPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const supabase = createClient();
+
+  // Check profile completion and redirect if incomplete
+  useEffect(() => {
+    async function checkAndRedirect() {
+      if (!user) return;
+      
+      const completionStatus = await checkProfileCompletion(user.id);
+      if (!completionStatus.isComplete) {
+        router.push("/dashboard/profile");
+      }
+    }
+    
+    if (user) {
+      checkAndRedirect();
+    }
+  }, [user, router]);
 
   useEffect(() => {
     async function fetchProfiles() {

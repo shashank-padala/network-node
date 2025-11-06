@@ -101,7 +101,7 @@ export default function Home() {
   // Redirect to members page if user is logged in
   useEffect(() => {
     if (!loading && user) {
-      router.push("/dashboard/profile");
+      router.push("/dashboard/members");
     }
   }, [user, loading, router]);
 
