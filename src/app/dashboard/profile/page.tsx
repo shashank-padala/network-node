@@ -21,7 +21,8 @@ import {
   Save,
   Handshake,
   Briefcase,
-  Users
+  Users,
+  Phone
 } from "lucide-react";
 import { FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
