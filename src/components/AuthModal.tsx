@@ -282,13 +282,13 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
 
                   <Button
                     type="button"
-                    className="w-full flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative h-10 sm:h-11"
+                    className="w-full flex items-center justify-center gap-2.5 sm:gap-3 py-3 sm:py-4 text-sm sm:text-base font-bold bg-white hover:bg-gray-50 border-2 border-gray-300 hover:border-blue-500 shadow-lg hover:shadow-xl transition-all text-gray-900 relative h-14 sm:h-16"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
-                    <FcGoogle size={18} className="sm:w-5 sm:h-5" /> 
-                    <span>Continue with Google</span>
-                    <span className="absolute -bottom-1.5 -right-1.5 sm:-bottom-2 sm:-right-2 bg-green-600 text-white text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full">
+                    <FcGoogle size={28} className="sm:w-9 sm:h-9" /> 
+                    <span className="font-bold">Continue with Google</span>
+                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-600 to-green-600 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-1 rounded-full shadow-md">
                       Recommended
                     </span>
                   </Button>
@@ -375,13 +375,13 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess, initialTa
 
                   <Button
                     type="button"
-                    className="w-full flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold bg-black hover:bg-gray-800 transition-colors text-white relative h-10 sm:h-11"
+                    className="w-full flex items-center justify-center gap-2.5 sm:gap-3 py-3 sm:py-4 text-sm sm:text-base font-bold bg-white hover:bg-gray-50 border-2 border-gray-300 hover:border-blue-500 shadow-lg hover:shadow-xl transition-all text-gray-900 relative h-14 sm:h-16"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
-                    <FcGoogle size={18} className="sm:w-5 sm:h-5" /> 
-                    <span>Continue with Google</span>
-                    <span className="absolute -bottom-1.5 -right-1.5 sm:-bottom-2 sm:-right-2 bg-green-600 text-white text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full">
+                    <FcGoogle size={28} className="sm:w-9 sm:h-9" /> 
+                    <span className="font-bold">Continue with Google</span>
+                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-600 to-green-600 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-1 rounded-full shadow-md">
                       Recommended
                     </span>
                   </Button>

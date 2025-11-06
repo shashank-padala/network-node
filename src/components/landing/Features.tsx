@@ -14,7 +14,7 @@ const features = [
   {
     icon: Briefcase,
     title: "Job Board",
-    description: "Hire or get hired within the community. Request 15-min calls and collaborate.",
+    description: "Hire or get hired within the community. Request 15-min meetings and collaborate.",
     bgColor: "bg-[hsl(var(--green-bg))]",
     iconColor: "text-[hsl(var(--green-icon))]",
   },

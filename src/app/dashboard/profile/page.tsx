@@ -13,9 +13,7 @@ import {
   Mail, 
   FileText, 
   Code, 
-  MessageCircle,
   Calendar,
-  Phone,
   Linkedin,
   Twitter,
   Github,
@@ -25,6 +23,7 @@ import {
   Briefcase,
   Users
 } from "lucide-react";
+import { FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
@@ -303,7 +302,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
                 <label className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <FaWhatsapp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600" />
                   WhatsApp Number *
                 </label>
                 <div className="flex gap-2 sm:gap-3 items-center">
@@ -329,7 +328,7 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="discord" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <FaDiscord className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-600" />
                   Discord Username *
                 </label>
                 <Input

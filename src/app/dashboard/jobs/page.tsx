@@ -164,8 +164,7 @@ export default function JobsPage() {
                       onClick={() => window.open(job.profiles!.calendly_url!, "_blank")}
                     >
                       <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">Book Call</span>
-                      <span className="sm:hidden">Call</span>
+                      <span>Book Meeting</span>
                     </Button>
                   )}
                 </div>

@@ -67,29 +67,28 @@ export function SkillsInput({
             )}
           </span>
         ))}
-        <div className="flex items-center gap-2 flex-1 min-w-[120px]">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={skills.length === 0 ? placeholder : ""}
-            disabled={disabled}
-            className="flex-1 outline-none bg-transparent text-sm placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
-            required={required && skills.length === 0}
-          />
-          <button
-            type="button"
-            onClick={handleAddSkill}
-            disabled={disabled || !inputValue.trim()}
-            className="flex items-center justify-center w-8 h-8 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex-shrink-0"
-            aria-label="Add skill"
-            title="Add skill"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={skills.length === 0 ? placeholder : ""}
+          disabled={disabled}
+          className="flex-1 min-w-[120px] outline-none bg-transparent text-sm placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+          required={required && skills.length === 0}
+        />
       </div>
+      <button
+        type="button"
+        onClick={handleAddSkill}
+        disabled={disabled || !inputValue.trim()}
+        className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 text-sm font-medium"
+        aria-label="Add skill"
+        title="Add skill"
+      >
+        <Plus className="w-4 h-4" />
+        <span>Add Skill</span>
+      </button>
       {skills.length === 0 && (
         <p className="text-xs text-gray-500">
           Type a skill and press <span className="hidden sm:inline">Enter</span><span className="sm:hidden">Add</span> button

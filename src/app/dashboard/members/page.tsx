@@ -9,13 +9,12 @@ import {
   Loader2, 
   User, 
   Calendar, 
-  MessageCircle,
   Github,
   Linkedin,
   Twitter,
-  Mail,
-  Phone
+  Mail
 } from "lucide-react";
+import { FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -228,7 +227,7 @@ export default function MembersPage() {
                           className="p-1.5 sm:p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                           title={`Discord: ${profile.discord_username}`}
                         >
-                          <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <FaDiscord className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" />
                         </button>
                       )}
                       {profile.whatsapp_country_code && profile.whatsapp_number && (
@@ -237,7 +236,7 @@ export default function MembersPage() {
                           className="p-1.5 sm:p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="WhatsApp"
                         >
-                          <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <FaWhatsapp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
                         </button>
                       )}
                     </div>
@@ -254,8 +253,7 @@ export default function MembersPage() {
                               onClick={() => window.open(profile.calendly_url!, "_blank")}
                             >
                               <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                              <span className="hidden sm:inline">Book Call</span>
-                              <span className="sm:hidden">Call</span>
+                              <span>Book Meeting</span>
                             </Button>
                           )}
                         </>
