@@ -16,7 +16,6 @@ export default function Home() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalTab, setAuthModalTab] = useState<"signup" | "login">("signup");
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -26,12 +25,10 @@ export default function Home() {
   };
 
   const handleLoginClick = () => {
-    setAuthModalTab("login");
     setAuthModalOpen(true);
   };
 
   const handleJoinClick = () => {
-    setAuthModalTab("signup");
     setAuthModalOpen(true);
   };
 
@@ -134,7 +131,6 @@ export default function Home() {
       <AuthModal 
         open={authModalOpen} 
         onOpenChange={setAuthModalOpen}
-        initialTab={authModalTab}
         onAuthSuccess={() => {
           // Redirect handled by callback route
         }}
