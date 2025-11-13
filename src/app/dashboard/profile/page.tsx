@@ -118,14 +118,9 @@ export default function ProfilePage() {
     const supabase = createClient();
 
     try {
-      // Validate required fields
-      if (!formData.name.trim()) {
-        setError("Name is required");
-        setSaving(false);
-        return;
-      }
-      if (formData.skills.length === 0) {
-        setError("At least one skill is required");
+      // Validate required fields (only WhatsApp and Discord)
+      if (!formData.whatsappNumber.trim()) {
+        setError("WhatsApp number is required");
         setSaving(false);
         return;
       }
@@ -191,14 +186,6 @@ export default function ProfilePage() {
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-      
-      // Check if profile is complete and redirect to members page if so
-      const completionStatus = await checkProfileCompletion(user.id);
-      if (completionStatus.isComplete) {
-        setTimeout(() => {
-          router.push("/dashboard/members");
-        }, 1500);
-      }
     } catch (err) {
       setError("An unexpected error occurred");
     } finally {
@@ -258,10 +245,10 @@ export default function ProfilePage() {
               <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
                 <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
               </div>
-              Basic Information
+              Basic Information (Optional)
             </CardTitle>
             <CardDescription className="text-sm sm:text-base">
-              Complete these fields to activate your profile
+              Add details to help others discover you
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 sm:space-y-6">
@@ -270,12 +257,11 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <label htmlFor="name" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
                   <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Full Name *
+                  Full Name
                 </label>
                 <Input
                   id="name"
                   name="name"
-                  required
                   value={formData.name}
                   onChange={handleChange}
                   disabled={saving}
@@ -350,14 +336,13 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label htmlFor="skills" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                Skills *
+                Skills
               </label>
               <SkillsInput
                 skills={formData.skills}
                 onChange={(skills) => setFormData({ ...formData, skills })}
                 disabled={saving}
-                placeholder="Add at least one skill to continue"
-                required
+                placeholder="Add your skills"
               />
             </div>
 
@@ -391,7 +376,7 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
               <div className="p-1.5 sm:p-2 bg-orange-100 rounded-lg">
                 <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
               </div>
-              Availability & Interests *
+              Availability & Interests (Optional)
             </CardTitle>
             <CardDescription className="text-sm sm:text-base">
               Let others know what you're open to
@@ -506,7 +491,7 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
               <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
                 <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
               </div>
-              Professional Links
+              Professional Links (Optional)
             </CardTitle>
             <CardDescription className="text-sm sm:text-base">
               Connect your professional profiles
@@ -575,7 +560,7 @@ For example: 'I'm a full-stack developer passionate about building scalable web 
               <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
                 <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
               </div>
-              Contact Information
+              Contact Information (Optional)
             </CardTitle>
             <CardDescription className="text-sm sm:text-base">
               How others can reach you

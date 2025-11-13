@@ -14,7 +14,7 @@ import { FaWhatsapp, FaDiscord, FaLinkedin, FaTwitter, FaGithub, FaEnvelope } fr
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { checkProfileCompletion } from "@/lib/profile-utils";
-import { useRouter } from "next/navigation";
+import OnboardingModal from "@/components/OnboardingModal";
 
 interface Profile {
   id: string;
@@ -34,27 +34,27 @@ interface Profile {
 
 export default function MembersPage() {
   const { user } = useAuth();
-  const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const supabase = createClient();
 
-  // Check profile completion and redirect if incomplete
+  // Check profile completion and show onboarding modal if incomplete
   useEffect(() => {
-    async function checkAndRedirect() {
+    async function checkProfile() {
       if (!user) return;
       
       const completionStatus = await checkProfileCompletion(user.id);
       if (!completionStatus.isComplete) {
-        router.push("/dashboard/profile");
+        setShowOnboardingModal(true);
       }
     }
     
     if (user) {
-      checkAndRedirect();
+      checkProfile();
     }
-  }, [user, router]);
+  }, [user]);
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -284,6 +284,15 @@ export default function MembersPage() {
             </Card>
           ))}
         </div>
+      )}
+
+      {/* Onboarding Modal */}
+      {user && (
+        <OnboardingModal
+          open={showOnboardingModal}
+          onOpenChange={setShowOnboardingModal}
+          userId={user.id}
+        />
       )}
     </div>
   );

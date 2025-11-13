@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Users,
@@ -16,9 +16,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
-import { ProfileBlockingDialog } from "@/components/ProfileBlockingDialog";
-import { checkProfileCompletion } from "@/lib/profile-utils";
 
 const navigation = [
   { name: "Members", href: "/dashboard/members", icon: Users },
@@ -35,60 +32,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const supabase = createClient();
-  const router = useRouter();
-  const [checkingProfile, setCheckingProfile] = useState(true);
-  const [showBlockingDialog, setShowBlockingDialog] = useState(false);
-  const [profileComplete, setProfileComplete] = useState(false);
-
-  useEffect(() => {
-    async function checkProfile() {
-      if (!user) {
-        setCheckingProfile(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", user.id)
-          .single();
-
-        if (error || !data) {
-          // Profile should always exist due to database trigger, but if it doesn't,
-          // something went wrong - refresh to retry
-          console.error("Profile not found - trigger may have failed:", error);
-          router.refresh();
-          setCheckingProfile(false);
-          return;
-        }
-
-        // Check if profile is complete
-        const completionStatus = await checkProfileCompletion(user.id);
-        setProfileComplete(completionStatus.isComplete);
-
-        // If profile is incomplete and user is not on profile page, show blocking dialog
-        if (!completionStatus.isComplete && pathname !== "/dashboard/profile") {
-          setShowBlockingDialog(true);
-        } else if (pathname === "/dashboard/profile") {
-          // Close dialog if user is on profile page
-          setShowBlockingDialog(false);
-        }
-      } catch (err) {
-        console.error("Error checking profile:", err);
-      } finally {
-        setCheckingProfile(false);
-      }
-    }
-
-    // Only check profile once when user is available
-    if (user) {
-      checkProfile();
-    } else {
-      setCheckingProfile(false);
-    }
-  }, [user, supabase, pathname]);
 
   const handleLogout = async () => {
     await signOut();
@@ -119,26 +62,17 @@ export default function DashboardLayout({
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-              const isProfilePage = item.href === "/dashboard/profile";
-              const canNavigate = profileComplete || isProfilePage;
               
               return (
                 <Link
                   key={item.name}
                   href={item.href}
                   prefetch={true}
-                  onClick={(e) => {
-                    if (!canNavigate && !isProfilePage) {
-                      e.preventDefault();
-                      setShowBlockingDialog(true);
-                    }
-                  }}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 w-full cursor-pointer",
                     isActive
                       ? "bg-blue-50 text-blue-700 border border-blue-200"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                    !canNavigate && !isProfilePage ? "opacity-60" : ""
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
                 >
                   <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-blue-600" : "")} />
@@ -195,28 +129,17 @@ export default function DashboardLayout({
               <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                 {navigation.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-                  const isProfilePage = item.href === "/dashboard/profile";
-                  const canNavigate = profileComplete || isProfilePage;
                   return (
                     <Link
                       key={item.name}
                       href={item.href}
                       prefetch={true}
-                      onClick={(e) => {
-                        if (!canNavigate && !isProfilePage) {
-                          e.preventDefault();
-                          setSidebarOpen(false);
-                          setShowBlockingDialog(true);
-                        } else {
-                          setSidebarOpen(false);
-                        }
-                      }}
+                      onClick={() => setSidebarOpen(false)}
                       className={cn(
                         "flex items-center gap-3 px-3 py-3 rounded-lg text-base font-medium transition-colors duration-150 w-full cursor-pointer",
                         isActive
                           ? "bg-blue-50 text-blue-700 border border-blue-200"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                        !canNavigate && !isProfilePage ? "opacity-60" : ""
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       )}
                     >
                       <item.icon className={cn("w-5 h-5 flex-shrink-0", isActive ? "text-blue-600" : "")} />
@@ -253,27 +176,15 @@ export default function DashboardLayout({
         <div className="grid grid-cols-4 h-16">
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-            const isProfilePage = item.href === "/dashboard/profile";
-            const canNavigate = profileComplete || isProfilePage;
             
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 prefetch={true}
-                onClick={(e) => {
-                  if (!canNavigate && !isProfilePage) {
-                    e.preventDefault();
-                    setShowBlockingDialog(true);
-                  }
-                }}
                 className={cn(
                   "relative flex flex-col items-center justify-center gap-0.5 transition-colors duration-150 active:bg-gray-50",
-                  isActive
-                    ? "text-blue-600"
-                    : canNavigate
-                    ? "text-gray-600"
-                    : "text-gray-400 opacity-50"
+                  isActive ? "text-blue-600" : "text-gray-600"
                 )}
               >
                 <item.icon className={cn("w-5 h-5", isActive && "text-blue-600")} />
@@ -291,13 +202,6 @@ export default function DashboardLayout({
           })}
         </div>
       </nav>
-
-      {!checkingProfile && (
-        <ProfileBlockingDialog 
-          open={showBlockingDialog} 
-          onClose={() => setShowBlockingDialog(false)}
-        />
-      )}
     </div>
   );
 }
