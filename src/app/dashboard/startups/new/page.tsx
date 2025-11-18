@@ -11,7 +11,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-export default function NewStartupPage() {
+export default function NewProjectPage() {
   const router = useRouter();
   const { user } = useAuth();
   const supabase = createClient();
@@ -27,7 +27,7 @@ export default function NewStartupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      setError("You must be logged in to post a startup");
+      setError("You must be logged in to post a project");
       return;
     }
 
@@ -53,7 +53,7 @@ export default function NewStartupPage() {
         return;
       }
 
-      router.push("/dashboard/startups");
+      router.push("/dashboard/projects");
     } catch (err) {
       setError("An unexpected error occurred");
       setLoading(false);
@@ -74,18 +74,18 @@ export default function NewStartupPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <Link
-        href="/dashboard/startups"
+        href="/dashboard/projects"
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Startups
+        Back to Projects
       </Link>
 
       <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Post a Startup</CardTitle>
+          <CardTitle className="text-2xl">Share a Project</CardTitle>
           <CardDescription>
-            Share your startup idea and find co-founders
+            Share your project idea and find collaborators
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -98,7 +98,7 @@ export default function NewStartupPage() {
 
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium">
-                Startup Title *
+                Project Title *
               </label>
               <Input
                 id="title"
@@ -122,7 +122,7 @@ export default function NewStartupPage() {
                 value={formData.description}
                 onChange={handleChange}
                 className="min-h-[150px]"
-                placeholder="Describe your startup idea, what problem it solves, and what you're looking for..."
+                placeholder="Describe your project idea, what problem it solves, and what you're looking for..."
                 disabled={loading}
               />
             </div>
@@ -170,7 +170,7 @@ export default function NewStartupPage() {
                   Posting...
                 </>
               ) : (
-                "Post Startup"
+                "Share Project"
               )}
             </Button>
           </form>
@@ -179,6 +179,8 @@ export default function NewStartupPage() {
     </div>
   );
 }
+
+
 
 
 

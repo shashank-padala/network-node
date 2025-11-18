@@ -174,3 +174,4 @@ export default function OnboardingModal({ open, onOpenChange, userId }: Props) {
   );
 }
 
+
