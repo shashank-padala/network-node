@@ -28,7 +28,6 @@ import { FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRY_CODES } from "@/constants/country-codes";
-import { SkillsInput } from "@/components/ui/skills-input";
 import { CountryCodeSelect } from "@/components/ui/country-code-select";
 import { checkProfileCompletion } from "@/lib/profile-utils";
 import { useRouter } from "next/navigation";
@@ -45,7 +44,7 @@ export default function ProfilePage() {
     name: "",
     email: "",
     bio: "",
-    skills: [] as string[],
+    skills: "",
     linkedin: "",
     twitter: "",
     github: "",
@@ -82,7 +81,7 @@ export default function ProfilePage() {
             name: data.name || "",
             email: data.email || "",
             bio: data.bio || "",
-            skills: data.skills || [],
+            skills: data.skills?.join(", ") || "",
             linkedin: data.linkedin_url || "",
             twitter: data.twitter_url || "",
             github: data.github_url || "",
@@ -138,10 +137,15 @@ export default function ProfilePage() {
         .eq("id", user.id)
         .single();
 
+      // Convert comma-separated skills string to array
+      const skillsArray = formData.skills
+        ? formData.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+
       const profileData: any = {
         name: formData.name,
         bio: formData.bio || null,
-        skills: formData.skills,
+        skills: skillsArray,
         linkedin_url: formData.linkedin || null,
         twitter_url: formData.twitter || null,
         github_url: formData.github || null,
@@ -338,12 +342,19 @@ export default function ProfilePage() {
                 <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Skills
               </label>
-              <SkillsInput
-                skills={formData.skills}
-                onChange={(skills) => setFormData({ ...formData, skills })}
+              <Input
+                id="skills"
+                name="skills"
+                type="text"
+                value={formData.skills}
+                onChange={handleChange}
+                placeholder="JavaScript, React, Node.js, Python, etc."
                 disabled={saving}
-                placeholder="Add your skills"
+                className="h-10 sm:h-11 text-sm sm:text-base border-gray-200 focus:ring-2 focus:ring-blue-500/20"
               />
+              <p className="text-xs text-muted-foreground">
+                Separate multiple skills with commas
+              </p>
             </div>
 
             {/* Bio */}
