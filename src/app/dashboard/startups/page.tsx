@@ -86,7 +86,7 @@ export default function StartupsPage() {
             Startup Directory
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
-            Discover startups founded by Network Society members. Explore their products, innovations, and connect with the builders behind them.
+            Discover startups founded by NS members. Explore their products, innovations, and connect with the builders behind them.
           </p>
         </div>
         <Button
