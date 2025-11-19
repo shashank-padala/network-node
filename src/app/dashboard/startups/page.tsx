@@ -104,15 +104,13 @@ export default function StartupsPage() {
 
   return (
     <div className="max-w-7xl mx-auto w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8 md:mb-10">
-        <div className="flex-1">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Startup Directory
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
-            Discover startups founded by NS members. Explore their products, innovations, and connect with the builders behind them.
-          </p>
-        </div>
+      <div className="mb-4 sm:mb-6 md:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Startup Directory</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
+          Discover startups founded by NS members. Explore their products, innovations, and connect with the builders behind them.
+        </p>
+      </div>
+      <div className="mb-4 sm:mb-6">
         <Button
           className="cursor-pointer w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           asChild
@@ -147,8 +145,8 @@ export default function StartupsPage() {
             <Card key={startup.id} className="rounded-xl sm:rounded-2xl hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-300">
               <CardHeader className="pb-3 sm:pb-4">
                 <div className="flex items-start gap-4 sm:gap-6">
-                  {/* Startup Icon */}
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  {/* Startup Icon - Hidden on mobile */}
+                  <div className="hidden sm:flex w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 items-center justify-center flex-shrink-0 shadow-sm">
                     <Rocket className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
                   </div>
                   
