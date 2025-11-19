@@ -46,6 +46,14 @@ export default function NewStartupPage() {
     setError(null);
 
     try {
+      // Validate word count
+      const wordCount = getWordCount(formData.description);
+      if (wordCount > 35) {
+        setError("Description must be 35 words or less");
+        setLoading(false);
+        return;
+      }
+
       const tagsArray = formData.tags
         ? formData.tags.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
@@ -87,10 +95,24 @@ export default function NewStartupPage() {
     }
   };
 
+  const getWordCount = (text: string): number => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
+    
+    // Enforce 35 word limit for description
+    if (name === "description" && type === "textarea") {
+      const wordCount = getWordCount(value);
+      if (wordCount > 35) {
+        // Don't update if over limit
+        return;
+      }
+    }
+    
     setFormData({
       ...formData,
       [name]:
@@ -149,9 +171,14 @@ export default function NewStartupPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium">
-                Description *
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="description" className="text-sm font-medium">
+                  Description *
+                </label>
+                <span className={`text-xs ${getWordCount(formData.description) > 35 ? 'text-red-600' : 'text-muted-foreground'}`}>
+                  {getWordCount(formData.description)} / 35 words
+                </span>
+              </div>
               <Textarea
                 id="description"
                 name="description"
@@ -161,9 +188,10 @@ export default function NewStartupPage() {
                 className="min-h-[150px] text-base"
                 placeholder="Tell us about your startup: What problem are you solving? What makes your product unique? What stage are you at? Share your story and vision..."
                 disabled={loading}
+                maxLength={500}
               />
               <p className="text-xs text-muted-foreground">
-                This is your chance to showcase your startup. Be descriptive and highlight what makes it special.
+                Keep it concise! Maximum 35 words to help others quickly understand your startup.
               </p>
             </div>
 
