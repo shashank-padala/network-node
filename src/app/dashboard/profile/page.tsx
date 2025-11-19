@@ -340,7 +340,7 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label htmlFor="skills" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                Skills
+                Skills (comma-separated) *
               </label>
               <Input
                 id="skills"
