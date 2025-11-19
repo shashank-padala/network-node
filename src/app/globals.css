@@ -120,6 +120,37 @@
     color: hsl(var(--foreground));
     font-family: var(--font-inter), 'Inter', sans-serif;
   }
+
+  /* Global cursor-pointer styling for all clickable elements */
+  a,
+  button,
+  [role="button"],
+  [role="link"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  label[for],
+  .cursor-pointer,
+  [class*="cursor-pointer"] {
+    cursor: pointer;
+  }
+
+  /* Ensure disabled elements don't show pointer cursor */
+  a:disabled,
+  button:disabled,
+  [role="button"]:disabled,
+  [aria-disabled="true"],
+  [class*="cursor-pointer"]:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Remove pointer cursor for non-clickable links */
+  a[aria-disabled="true"],
+  a:not([href]),
+  a[href=""],
+  a[href="#"] {
+    cursor: default;
+  }
 }
 
 @layer utilities {

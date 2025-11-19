@@ -8,13 +8,14 @@ import {
   Search, 
   Loader2, 
   User, 
-  Calendar
+  Calendar,
+  MessageCircle
 } from "lucide-react";
-import { FaWhatsapp, FaDiscord, FaLinkedin, FaTwitter, FaGithub, FaEnvelope } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { checkProfileCompletion } from "@/lib/profile-utils";
 import OnboardingModal from "@/components/OnboardingModal";
+import { ContactDialog } from "@/components/ContactDialog";
 
 interface Profile {
   id: string;
@@ -38,6 +39,7 @@ export default function MembersPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const supabase = createClient();
 
   // Check profile completion and show onboarding modal if incomplete
@@ -94,18 +96,6 @@ export default function MembersPage() {
     });
   }, [profiles, searchQuery]);
 
-  const handleDiscordClick = (username: string) => {
-    // Copy Discord username to clipboard
-    navigator.clipboard.writeText(username);
-    // Show a simple notification (you could enhance this with a toast)
-    alert(`Discord username "${username}" copied to clipboard!`);
-  };
-
-  const handleWhatsAppClick = (countryCode: string, number: string) => {
-    const cleanNumber = number.replace(/\D/g, "");
-    const whatsappUrl = `https://wa.me/${countryCode.replace(/\D/g, "")}${cleanNumber}`;
-    window.open(whatsappUrl, "_blank");
-  };
 
   if (loading) {
     return (
@@ -192,85 +182,19 @@ export default function MembersPage() {
                       </div>
                     )}
 
-                    {/* Social Links */}
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                      {profile.discord_username && (
-                        <button
-                          onClick={() => handleDiscordClick(profile.discord_username!)}
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title={`Discord: ${profile.discord_username}`}
-                        >
-                          <FaDiscord className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" />
-                        </button>
-                      )}
-                      {profile.whatsapp_country_code && profile.whatsapp_number && (
-                        <button
-                          onClick={() => handleWhatsAppClick(profile.whatsapp_country_code!, profile.whatsapp_number!)}
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                          title="WhatsApp"
-                        >
-                          <FaWhatsapp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
-                        </button>
-                      )}
-                      {profile.linkedin_url && (
-                        <a
-                          href={profile.linkedin_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="LinkedIn"
-                        >
-                          <FaLinkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
-                        </a>
-                      )}
-                      {profile.twitter_url && (
-                        <a
-                          href={profile.twitter_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Twitter/X"
-                        >
-                          <FaTwitter className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
-                        </a>
-                      )}
-                      {profile.github_url && (
-                        <a
-                          href={profile.github_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-                          title="GitHub"
-                        >
-                          <FaGithub className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-900" />
-                        </a>
-                      )}
-                      {profile.email && (
-                        <a
-                          href={`mailto:${profile.email}`}
-                          className="p-1.5 sm:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Email"
-                        >
-                          <FaEnvelope className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
-                        </a>
-                      )}
-                    </div>
-
                     {/* Action Buttons */}
                     <div className="flex flex-wrap items-center gap-2">
                       {user && user.id !== profile.id ? (
                         <>
-                          {profile.calendly_url && (
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="gap-1.5 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9"
-                              onClick={() => window.open(profile.calendly_url!, "_blank")}
-                            >
-                              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                              <span>Book Meeting</span>
-                            </Button>
-                          )}
+                          <Button 
+                            variant="default"
+                            size="sm" 
+                            className="gap-2 text-xs sm:text-sm h-8 sm:h-9 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                            onClick={() => setSelectedProfile(profile)}
+                          >
+                            <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span>Contact Me</span>
+                          </Button>
                         </>
                       ) : (
                         <Button variant="outline" size="sm" disabled className="text-xs sm:text-sm h-8 sm:h-9">
@@ -294,6 +218,13 @@ export default function MembersPage() {
           userId={user.id}
         />
       )}
+
+      {/* Contact Dialog */}
+      <ContactDialog
+        profile={selectedProfile}
+        open={!!selectedProfile}
+        onOpenChange={(open) => !open && setSelectedProfile(null)}
+      />
     </div>
   );
 }
