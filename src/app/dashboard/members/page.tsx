@@ -147,9 +147,9 @@ export default function MembersPage() {
       ) : (
         <div className="space-y-3 sm:space-y-4">
           {filteredProfiles.map((profile) => (
-            <Card key={profile.id} className="rounded-lg sm:rounded-xl">
-              <CardHeader className="pb-3 sm:pb-4">
-                <div className="flex items-start gap-3 sm:gap-4">
+            <Card key={profile.id} className="rounded-lg sm:rounded-xl overflow-hidden">
+              <CardHeader className="pb-3 sm:pb-4 overflow-hidden">
+                <div className="flex items-start gap-3 sm:gap-4 overflow-hidden">
                   {/* Profile Photo */}
                   <div className="flex-shrink-0">
                     {profile.photo_url ? (
@@ -167,8 +167,8 @@ export default function MembersPage() {
 
                   {/* Profile Info */}
                   <div className="flex-1 min-w-0 overflow-hidden">
-                    <div className="flex items-start justify-between gap-2 sm:gap-4 mb-1 sm:mb-2">
-                      <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="flex items-start justify-between gap-1.5 sm:gap-4 mb-1 sm:mb-2 overflow-hidden">
+                      <div className="flex-1 min-w-0 overflow-hidden max-w-[calc(100%-95px)] sm:max-w-none">
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                           {profile.name}
                         </h3>
