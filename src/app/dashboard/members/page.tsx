@@ -166,9 +166,9 @@ export default function MembersPage() {
                   </div>
 
                   {/* Profile Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 sm:gap-4 mb-1 sm:mb-2">
-                      <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="flex items-start justify-between gap-1 sm:gap-2 md:gap-4 mb-1 sm:mb-2">
+                      <div className="flex-1 min-w-0 overflow-hidden pr-1 sm:pr-0">
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                           {profile.name}
                         </h3>
@@ -183,15 +183,15 @@ export default function MembersPage() {
                         <Button 
                           variant="default"
                           size="sm" 
-                          className="gap-1.5 sm:gap-2 text-xs sm:text-sm h-8 sm:h-9 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 flex-shrink-0"
+                          className="gap-1 sm:gap-1.5 md:gap-2 text-[10px] sm:text-xs md:text-sm h-7 sm:h-8 md:h-9 px-2 sm:px-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 flex-shrink-0"
                           onClick={() => setSelectedProfile(profile)}
                         >
-                          <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <MessageCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
                           <span className="hidden sm:inline">Contact Me</span>
                           <span className="sm:hidden">Contact</span>
                         </Button>
                       ) : (
-                        <Button variant="outline" size="sm" disabled className="text-xs sm:text-sm h-8 sm:h-9 flex-shrink-0">
+                        <Button variant="outline" size="sm" disabled className="text-[10px] sm:text-xs md:text-sm h-7 sm:h-8 md:h-9 px-2 sm:px-3 flex-shrink-0">
                           Your Profile
                         </Button>
                       )}
