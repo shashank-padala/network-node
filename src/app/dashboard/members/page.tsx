@@ -148,8 +148,9 @@ export default function MembersPage() {
         <div className="space-y-3 sm:space-y-4">
           {filteredProfiles.map((profile) => (
             <Card key={profile.id} className="rounded-lg sm:rounded-xl overflow-hidden">
-              <CardHeader className="pb-3 sm:pb-4 overflow-hidden">
-                <div className="flex items-start gap-3 sm:gap-4 overflow-hidden">
+              <CardHeader className="pb-3 sm:pb-4">
+                {/* Name and Button Row */}
+                <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
                   {/* Profile Photo */}
                   <div className="flex-shrink-0">
                     {profile.photo_url ? (
@@ -165,18 +166,13 @@ export default function MembersPage() {
                     )}
                   </div>
 
-                  {/* Profile Info */}
+                  {/* Name and Button */}
                   <div className="flex-1 min-w-0 overflow-hidden">
-                    <div className="flex items-start justify-between gap-1.5 sm:gap-4 mb-1 sm:mb-2 overflow-hidden">
+                    <div className="flex items-start justify-between gap-1.5 sm:gap-4 overflow-hidden">
                       <div className="flex-1 min-w-0 overflow-hidden max-w-[calc(100%-95px)] sm:max-w-none">
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                           {profile.name}
                         </h3>
-                        {profile.bio && (
-                          <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 mb-2 sm:mb-3">
-                            {profile.bio}
-                          </p>
-                        )}
                       </div>
                       {/* Action Buttons - Right side of name */}
                       {user && user.id !== profile.id ? (
@@ -196,23 +192,32 @@ export default function MembersPage() {
                         </Button>
                       )}
                     </div>
+                  </div>
+                </div>
 
-                    {/* Skills */}
-                    {profile.skills && profile.skills.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                        {profile.skills.map((skill, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                {/* Bio, Skills, and Icons - Full Width */}
+                {profile.bio && (
+                  <p className="text-xs sm:text-sm text-gray-600 line-clamp-3 sm:line-clamp-2 mb-2 sm:mb-3">
+                    {profile.bio}
+                  </p>
+                )}
 
-                    {/* Social Links and Meeting Button */}
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                {/* Skills */}
+                {profile.skills && profile.skills.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                    {profile.skills.map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Social Links and Meeting Button */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
                       {profile.discord_username && (
                         <button
                           onClick={() => handleDiscordClick(profile.discord_username!)}
@@ -286,8 +291,6 @@ export default function MembersPage() {
                         </Button>
                       )}
                     </div>
-                  </div>
-                </div>
               </CardHeader>
             </Card>
           ))}
